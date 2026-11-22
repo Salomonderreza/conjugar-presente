@@ -1,0 +1,2713 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>¡Conjuga! – Spanische Verben im Präsens</title>
+  <meta name="description" content="Spanische Verben im Präsens konjugieren üben – mit Leveln und Fortsetzungscode.">
+  <meta name="theme-color" content="#c2410c">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23c2410c'/%3E%3Ctext x='32' y='45' font-size='38' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'%3E%C3%B1%3C/text%3E%3C/svg%3E">
+  <style>
+:root {
+  --hintergrund: #f6f1e9;
+  --karte: #ffffff;
+  --text: #2b2118;
+  --text-leise: #6b5d50;
+  --linie: #e6ddd0;
+  --haupt: #c2410c;
+  --haupt-dunkel: #9a3412;
+  --haupt-hell: #fff1e8;
+  --sonne: #f2b134;
+  --gut: #15803d;
+  --gut-hell: #e9f8ee;
+  --fehler: #b42318;
+  --fehler-hell: #fdeceb;
+  --info-hell: #eef4fb;
+  --info: #1e4f86;
+  --radius: 18px;
+  --schatten: 0 1px 2px rgba(60, 40, 20, .06), 0 6px 20px rgba(60, 40, 20, .07);
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: var(--hintergrund);
+  color: var(--text);
+  line-height: 1.5;
+  font-size: 1rem;
+}
+[hidden] { display: none !important; }
+.unsichtbar { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+.rahmen { max-width: 680px; margin: 0 auto; padding: 16px 16px 40px; }
+
+/* Kopf */
+.kopf { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; margin: 4px 0 16px; }
+.marke { display: flex; align-items: center; gap: 12px; }
+.logo {
+  width: 48px; height: 48px; border-radius: 14px; background: var(--haupt); color: #fff;
+  display: grid; place-items: center; font-weight: 800; font-size: 30px; line-height: 1;
+  box-shadow: inset 0 -4px 0 rgba(0,0,0,.15);
+}
+h1 { margin: 0; font-size: 1.5rem; line-height: 1.1; letter-spacing: -.01em; }
+.untertitel { margin: 2px 0 0; color: var(--text-leise); font-size: .95rem; }
+
+.codebox { background: var(--karte); border: 1px solid var(--linie); border-radius: 14px; padding: 8px 10px 8px 14px; }
+.codebox-label { display: block; font-size: .75rem; color: var(--text-leise); text-transform: uppercase; letter-spacing: .06em; }
+.codebox-zeile { display: flex; align-items: center; gap: 10px; }
+.code { font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; font-size: 1.05rem; letter-spacing: .06em; }
+.code.gross { font-size: 1.4rem; text-align: center; background: var(--haupt-hell); padding: 10px; border-radius: 12px; }
+
+/* Karten */
+.karte { background: var(--karte); border-radius: var(--radius); box-shadow: var(--schatten); padding: 18px 20px; margin-bottom: 16px; }
+
+/* Status */
+.status-kopf { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 12px; }
+.level-abzeichen { background: var(--haupt); color: #fff; font-weight: 700; border-radius: 999px; padding: 3px 12px; font-size: .95rem; white-space: nowrap; }
+.level-titel { font-weight: 600; }
+.level-hinweis { margin: 8px 0 0; padding: 8px 12px; background: var(--info-hell); color: var(--info); border-radius: 10px; font-size: .9rem; }
+.fortschritt { display: grid; grid-template-columns: repeat(10, 1fr); gap: 5px; margin: 14px 0 6px; }
+.fortschritt span { height: 12px; border-radius: 6px; background: var(--linie); transition: background .25s, transform .25s; }
+.fortschritt span.voll { background: var(--sonne); }
+.fortschritt span.neu { transform: scaleY(1.4); }
+.fortschritt-text { margin: 0; font-size: .95rem; }
+.statistik { margin: 4px 0 0; font-size: .85rem; color: var(--text-leise); }
+
+/* Aufgabe */
+.aufgabe-karte { padding-top: 22px; }
+.markierung { display: inline-block; margin: 0 0 6px; font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--info); background: var(--info-hell); padding: 2px 10px; border-radius: 999px; }
+.aufgabe { margin: 0 0 16px; font-size: clamp(1.6rem, 6.5vw, 2.3rem); line-height: 1.25; overflow-wrap: anywhere; }
+.aufgabe .pron { color: var(--text-leise); font-weight: 500; }
+.aufgabe .inf { font-weight: 800; }
+.aufgabe .pfeil { color: var(--haupt); font-weight: 700; }
+.aufgabe .zusatz { display: block; font-size: .95rem; color: var(--text-leise); font-weight: 400; margin-top: 2px; }
+
+.antwort-form { display: flex; gap: 10px; }
+#antwort {
+  flex: 1; min-width: 0; font-size: 1.4rem; padding: 12px 14px; border-radius: 14px;
+  border: 2px solid var(--linie); background: #fffdfa; color: var(--text); font-family: inherit;
+}
+#antwort:focus { outline: none; border-color: var(--haupt); box-shadow: 0 0 0 4px rgba(194, 65, 12, .15); }
+#antwort.ist-richtig { border-color: var(--gut); background: var(--gut-hell); }
+#antwort.ist-falsch { border-color: var(--fehler); background: var(--fehler-hell); }
+#antwort[readonly] { cursor: default; }
+.wackeln { animation: wackeln .35s; }
+@keyframes wackeln { 20%, 60% { transform: translateX(-5px); } 40%, 80% { transform: translateX(5px); } }
+
+.akzente { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 10px; }
+.akzent {
+  min-width: 46px; min-height: 42px; font-size: 1.2rem; border-radius: 10px; border: 1px solid var(--linie);
+  background: #fff; color: var(--text); cursor: pointer; font-family: inherit;
+}
+.akzent:hover { background: var(--haupt-hell); }
+.akzent-info { font-size: .85rem; color: var(--text-leise); margin-left: 4px; }
+
+.rueckmeldung:empty { display: none; }
+.rueckmeldung { margin-top: 16px; padding: 12px 14px; border-radius: 14px; font-size: 1.02rem; }
+.rueckmeldung.gut { background: var(--gut-hell); color: #0f5a2b; }
+.rueckmeldung.schlecht { background: var(--fehler-hell); color: #8a1c13; }
+.rueckmeldung.neutral { background: var(--info-hell); color: var(--info); }
+.rueckmeldung p { margin: 0; }
+.rueckmeldung p + p { margin-top: 6px; }
+.rueckmeldung .titel { font-weight: 700; }
+.rueckmeldung .klein { font-size: .9rem; }
+.aufstieg { margin-top: 10px; padding: 12px 14px; border-radius: 12px; background: #fff7e0; color: #6b4a00; border: 1px solid #f5d98a; }
+
+.aktionen { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; margin-top: 14px; }
+.aktionen:not(:has(button:not([hidden]))) { margin-top: 0; }
+
+/* Knöpfe */
+.knopf {
+  font: inherit; font-weight: 600; border-radius: 14px; padding: 12px 18px; min-height: 48px;
+  border: 2px solid transparent; cursor: pointer; transition: background .15s, transform .05s;
+}
+.knopf:active { transform: translateY(1px); }
+.knopf:focus-visible, .akzent:focus-visible { outline: 3px solid #1e4f86; outline-offset: 2px; }
+.knopf.haupt { background: var(--haupt); color: #fff; }
+.knopf.haupt:hover { background: var(--haupt-dunkel); }
+.knopf.zweit { background: #fff; color: var(--haupt-dunkel); border-color: #f0c9b3; }
+.knopf.zweit:hover { background: var(--haupt-hell); }
+.knopf.klein { padding: 6px 12px; min-height: 36px; font-size: .9rem; background: var(--haupt-hell); color: var(--haupt-dunkel); border-radius: 10px; }
+.knopf.text { background: none; color: var(--text-leise); padding: 8px 10px; min-height: 40px; text-decoration: underline; text-underline-offset: 3px; font-weight: 500; }
+.knopf.text:hover { color: var(--text); }
+
+/* Fuß */
+.fuss { text-align: center; }
+.sync { font-size: .85rem; color: var(--text-leise); margin: 4px 0 6px; }
+.sync.warnung { color: #8a5a00; }
+.fuss-knoepfe { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; }
+
+/* Dialoge */
+.dialog {
+  border: none; border-radius: 22px; padding: 22px; width: min(460px, calc(100vw - 24px));
+  box-shadow: 0 20px 60px rgba(40, 25, 10, .3); color: var(--text);
+}
+.dialog.breit { width: min(620px, calc(100vw - 24px)); }
+.dialog::backdrop { background: rgba(43, 33, 24, .45); }
+.dialog h2 { margin: 0 0 10px; font-size: 1.35rem; }
+.dialog h3 { margin: 18px 0 6px; font-size: 1.05rem; }
+.dialog label { display: block; font-weight: 600; margin: 10px 0 6px; }
+.code-eingabe {
+  width: 100%; font-size: 1.3rem; padding: 12px; border-radius: 12px; border: 2px solid var(--linie);
+  font-family: ui-monospace, Menlo, Consolas, monospace; letter-spacing: .08em; text-transform: uppercase;
+}
+.code-eingabe:focus { outline: none; border-color: var(--haupt); }
+.dialog-meldung { min-height: 1.4em; margin: 8px 0 0; color: var(--fehler); font-size: .95rem; }
+.dialog-meldung.ok { color: var(--gut); }
+.dialog-knoepfe { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; margin-top: 16px; }
+.dialog-knoepfe.gestapelt { flex-direction: column; }
+.dialog-knoepfe.gestapelt .knopf { width: 100%; }
+#code-warnung { background: #fff7e0; padding: 10px 12px; border-radius: 10px; font-size: .95rem; }
+.regeln { padding-left: 1.2em; margin: 0; }
+.regeln li + li { margin-top: 4px; }
+.levelliste { padding-left: 0; margin: 0; list-style: none; font-size: .95rem; }
+.levelliste li { display: flex; gap: 10px; padding: 5px 0; border-bottom: 1px solid var(--linie); }
+.levelliste li.aktuell { font-weight: 700; color: var(--haupt-dunkel); }
+.levelliste .nr { min-width: 3.2em; color: var(--text-leise); }
+.quelle { font-size: .85rem; color: var(--text-leise); }
+kbd { font-family: inherit; font-size: .85em; border: 1px solid var(--linie); border-bottom-width: 2px; border-radius: 5px; padding: 0 5px; background: #fff; }
+
+@media (max-width: 480px) {
+  .rahmen { padding: 12px 12px 32px; }
+  .kopf { flex-direction: column; align-items: stretch; }
+  .codebox-zeile { justify-content: space-between; }
+  .karte { padding: 16px; }
+  .antwort-form { flex-direction: column; }
+  .knopf.haupt#pruefen { width: 100%; }
+  .aktionen .knopf { flex: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
+
+/* Prüfseite für Lehrkräfte */
+.breit-rahmen { max-width: 1100px; }
+.kopf a.knopf { text-decoration: none; display: inline-flex; align-items: center; }
+.pruef-h2 { font-size: 1.1rem; margin: 18px 0 8px; }
+.pruef-h2:first-child { margin-top: 0; }
+.pruef-zusammenfassung { display: flex; flex-wrap: wrap; gap: 8px; }
+.pruef-zusammenfassung:empty { display: none; }
+.zahl { padding: 4px 12px; border-radius: 999px; font-weight: 600; font-size: .95rem; }
+.zahl.gut { background: var(--gut-hell); color: #0f5a2b; }
+.zahl.warn { background: #fff7e0; color: #6b4a00; }
+.zahl.fehl { background: var(--fehler-hell); color: #8a1c13; }
+.tabelle-huelle { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.pruef-tabelle { border-collapse: collapse; width: 100%; font-size: .95rem; }
+.pruef-tabelle th, .pruef-tabelle td { text-align: left; padding: 6px 10px; border-bottom: 1px solid var(--linie); white-space: nowrap; }
+.pruef-tabelle th { font-size: .8rem; color: var(--text-leise); font-weight: 600; }
+.pruef-tabelle tr.warnung td { background: #fff7e0; }
+.pruef-tabelle tr.hinweis-zeile td { background: #fff7e0; white-space: normal; color: #6b4a00; font-size: .9rem; }
+.pruef-tabelle td.unreg, .unreg-muster { font-weight: 700; color: var(--haupt-dunkel); }
+.pruef-fehler { margin: 0; padding-left: 1.2em; }
+.pruef-fehler li { background: var(--fehler-hell); color: #8a1c13; border-radius: 10px; padding: 8px 12px; margin-bottom: 6px; }
+.pruef-eingabe { width: 100%; min-height: 260px; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .95rem; padding: 12px; border-radius: 12px; border: 2px solid var(--linie); }
+.pruef-eingabe:focus { outline: none; border-color: var(--haupt); }
+code { font-family: ui-monospace, Menlo, Consolas, monospace; background: #f3ede4; padding: 1px 5px; border-radius: 5px; font-size: .92em; }
+</style>
+</head>
+<body>
+  <div class="rahmen">
+    <header class="kopf">
+      <div class="marke">
+        <span class="logo" aria-hidden="true">ñ</span>
+        <div>
+          <h1>¡Conjuga!</h1>
+          <p class="untertitel">Spanische Verben im Präsens</p>
+        </div>
+      </div>
+      <div class="codebox" id="codebox" hidden>
+        <span class="codebox-label">Dein Fortsetzungscode</span>
+        <div class="codebox-zeile">
+          <strong id="code-anzeige" class="code">––––-––––-––––</strong>
+          <button type="button" id="code-kopieren" class="knopf klein">Kopieren</button>
+        </div>
+      </div>
+    </header>
+
+    <section class="karte status" id="status" hidden aria-label="Lernstand">
+      <div class="status-kopf">
+        <span class="level-abzeichen" id="level-nummer">Level 1</span>
+        <span class="level-titel" id="level-titel"></span>
+      </div>
+      <p class="level-hinweis" id="level-hinweis" hidden></p>
+      <div class="fortschritt" id="fortschritt" role="progressbar" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0" aria-label="Fortschritt bis zum nächsten Level"></div>
+      <p class="fortschritt-text" id="fortschritt-text"></p>
+      <p class="statistik" id="statistik"></p>
+    </section>
+
+    <main class="karte aufgabe-karte" id="uebung" hidden>
+      <p class="markierung" id="wiederholung" hidden>Wiederholung</p>
+      <p class="aufgabe" id="aufgabe" aria-live="polite"></p>
+      <form id="antwort-form" class="antwort-form" autocomplete="off" novalidate>
+        <label for="antwort" class="unsichtbar">Deine Antwort (nur die Verbform)</label>
+        <input id="antwort" name="antwort" type="text" lang="es" inputmode="text"
+               autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"
+               placeholder="Verbform eingeben" enterkeyhint="done">
+        <button type="submit" id="pruefen" class="knopf haupt">Prüfen</button>
+      </form>
+      <div class="akzente" aria-label="Sonderzeichen einfügen">
+        <button type="button" class="akzent" data-zeichen="á">á</button>
+        <button type="button" class="akzent" data-zeichen="é">é</button>
+        <button type="button" class="akzent" data-zeichen="í">í</button>
+        <span class="akzent-info">Akzente werden nicht bewertet.</span>
+      </div>
+      <div class="rueckmeldung" id="rueckmeldung" aria-live="assertive"></div>
+      <div class="aktionen">
+        <button type="button" id="loesung-zeigen" class="knopf zweit" hidden>Lösung anzeigen</button>
+        <button type="button" id="weiter" class="knopf haupt" hidden>Weiter <span aria-hidden="true">→</span></button>
+      </div>
+    </main>
+
+    <footer class="fuss" id="fuss" hidden>
+      <p class="sync" id="sync-status"></p>
+      <div class="fuss-knoepfe">
+        <button type="button" class="knopf text" id="oeffne-code">Anderen Code eingeben</button>
+        <button type="button" class="knopf text" id="oeffne-neu">Neu beginnen</button>
+        <button type="button" class="knopf text" id="oeffne-info">So funktioniert's</button>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Willkommen -->
+  <dialog id="dlg-start" class="dialog">
+    <h2>¡Hola! Willkommen</h2>
+    <p>Hier übst du, spanische Verben im Präsens zu konjugieren. Du startest in Level 1. Mit zehn richtigen Antworten hintereinander steigst du ins nächste Level auf.</p>
+    <p>Du bekommst einen <strong>Fortsetzungscode</strong>. Damit kannst du später – auch auf einem anderen Gerät – weitermachen. Namen oder andere Daten brauchen wir nicht.</p>
+    <div class="dialog-knoepfe gestapelt">
+      <button type="button" class="knopf haupt" id="start-neu">Neu beginnen</button>
+      <button type="button" class="knopf zweit" id="start-code">Ich habe schon einen Code</button>
+    </div>
+    <p class="dialog-meldung" id="start-meldung" aria-live="polite"></p>
+  </dialog>
+
+  <!-- Code eingeben -->
+  <dialog id="dlg-code" class="dialog">
+    <form id="code-form" novalidate>
+      <h2>Lernstand fortsetzen</h2>
+      <p id="code-warnung" hidden></p>
+      <label for="code-eingabe">Fortsetzungscode</label>
+      <input id="code-eingabe" type="text" class="code-eingabe" placeholder="ABCD-EFGH-JKLM"
+             autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false" maxlength="20">
+      <p class="dialog-meldung" id="code-meldung" aria-live="polite"></p>
+      <div class="dialog-knoepfe">
+        <button type="button" class="knopf zweit" id="code-abbrechen">Abbrechen</button>
+        <button type="submit" class="knopf haupt" id="code-laden">Laden</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Neu beginnen -->
+  <dialog id="dlg-neu" class="dialog">
+    <h2>Neu beginnen?</h2>
+    <p>Du bekommst einen neuen Code und startest wieder in Level 1.</p>
+    <p>Dein bisheriger Lernstand bleibt unter diesem Code erhalten. Notiere ihn, falls du später dorthin zurück möchtest:</p>
+    <p class="code gross" id="neu-alter-code"></p>
+    <div class="dialog-knoepfe">
+      <button type="button" class="knopf zweit" id="neu-abbrechen">Abbrechen</button>
+      <button type="button" class="knopf haupt" id="neu-bestaetigen">Neu beginnen</button>
+    </div>
+  </dialog>
+
+  <!-- Info -->
+  <dialog id="dlg-info" class="dialog breit">
+    <h2>So funktioniert's</h2>
+    <ul class="regeln">
+      <li>Gib <strong>nur die Verbform</strong> ein: bei „(yo) comprar →“ also <em>compro</em>, nicht <em>yo compro</em>.</li>
+      <li>Bei reflexiven Verben gehört das Reflexivpronomen dazu: (yo) llamarse → <em>me llamo</em>.</li>
+      <li>Akzente werden nicht bewertet. Nach deiner Antwort siehst du, wie das Wort richtig geschrieben wird.</li>
+      <li>Wenn du nicht weiterkommst, drücke auf „Lösung anzeigen“. Die Aufgabe kommt dann später noch einmal, und die Serie beginnt wieder bei 0.</li>
+      <li>Ist deine erste Antwort falsch, korrigierst du sie selbst. Die Serie beginnt dann wieder bei 0.</li>
+      <li>Zehn richtige erste Antworten hintereinander: nächstes Level.</li>
+      <li>Mit <kbd>Enter</kbd> prüfst du deine Antwort und gehst zur nächsten Aufgabe.</li>
+    </ul>
+    <h3>Die Level</h3>
+    <ol class="levelliste" id="levelliste"></ol>
+    <p class="quelle">Alle Verben und Formen stammen aus den Konjugationstabellen „Tablas de conjugaciones“. <span id="zusatz-info"></span></p>
+    <div class="dialog-knoepfe">
+      <button type="button" class="knopf haupt" id="info-schliessen">Schließen</button>
+    </div>
+  </dialog>
+
+  <noscript><p class="karte">Bitte aktiviere JavaScript, um die Übung zu nutzen.</p></noscript>
+
+  <script>
+/* ---- konfiguration.js ---- */
+/* ===================== ZUGANGSDATEN ZUM SPEICHERDIENST =====================
+   Hier die Project URL und den Publishable Key von Supabase eintragen (siehe README). */
+/* Zugangsdaten zum Speicherdienst (Supabase).
+   Beide Werte findest du in Supabase unter „Project Settings → API Keys“ bzw. im „Connect“-Dialog.
+   Der Publishable Key (oder der ältere „anon“-Key) ist für die Verwendung im Browser gedacht
+   und darf öffentlich sein. Den Secret Key / service_role-Key hier NIEMALS eintragen.
+   Solange hier die Platzhalter stehen, speichert die App nur lokal im Browser. */
+var KONFIGURATION = {
+  supabaseUrl: 'https://DEIN-PROJEKT.supabase.co',
+  supabaseKey: 'DEIN-SCHLUESSEL'
+};
+/* ========================================================================== */
+</script>
+  <script>
+/* ---- verben.js ---- */
+/* Verbdaten – einzige Quelle: „Tablas de conjugaciones.docx“.
+   Formen-Schlüssel: yo, tu, el (él/ella/usted), nosotros, vosotros, ellos (ellos/ellas/ustedes).
+   „abweichend_von_regel“: Pronomen, deren Form von der regelmäßigen Bildung abweicht
+   (reine Akzentunterschiede zählen nicht). */
+var VERBDATEN = {
+ "quelle": "Tablas de conjugaciones.docx",
+ "pronomen_zu_form": {
+  "yo": "yo",
+  "tú": "tu",
+  "él": "el",
+  "ella": "el",
+  "usted": "el",
+  "nosotros": "nosotros",
+  "vosotros": "vosotros",
+  "ellos": "ellos",
+  "ellas": "ellos",
+  "ustedes": "ellos"
+ },
+ "verben": [
+  {
+   "infinitiv": "hablar",
+   "gruppe": "ar",
+   "formen": {
+    "yo": "hablo",
+    "tu": "hablas",
+    "el": "habla",
+    "nosotros": "hablamos",
+    "vosotros": "habláis",
+    "ellos": "hablan"
+   },
+   "abweichend_von_regel": [],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "comprar",
+   "gruppe": "ar",
+   "formen": {
+    "yo": "compro",
+    "tu": "compras",
+    "el": "compra",
+    "nosotros": "compramos",
+    "vosotros": "compráis",
+    "ellos": "compran"
+   },
+   "abweichend_von_regel": [],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "estudiar",
+   "gruppe": "ar",
+   "formen": {
+    "yo": "estudio",
+    "tu": "estudias",
+    "el": "estudia",
+    "nosotros": "estudiamos",
+    "vosotros": "estudiáis",
+    "ellos": "estudian"
+   },
+   "abweichend_von_regel": [],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "escuchar",
+   "gruppe": "ar",
+   "formen": {
+    "yo": "escucho",
+    "tu": "escuchas",
+    "el": "escucha",
+    "nosotros": "escuchamos",
+    "vosotros": "escucháis",
+    "ellos": "escuchan"
+   },
+   "abweichend_von_regel": [],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "trabajar",
+   "gruppe": "ar",
+   "formen": {
+    "yo": "trabajo",
+    "tu": "trabajas",
+    "el": "trabaja",
+    "nosotros": "trabajamos",
+    "vosotros": "trabajáis",
+    "ellos": "trabajan"
+   },
+   "abweichend_von_regel": [],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "tomar",
+   "gruppe": "ar",
+   "formen": {
+    "yo": "tomo",
+    "tu": "tomas",
+    "el": "toma",
+    "nosotros": "tomamos",
+    "vosotros": "tomáis",
+    "ellos": "toman"
+   },
+   "abweichend_von_regel": [],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "bailar",
+   "gruppe": "ar",
+   "formen": {
+    "yo": "bailo",
+    "tu": "bailas",
+    "el": "baila",
+    "nosotros": "bailamos",
+    "vosotros": "bailáis",
+    "ellos": "bailan"
+   },
+   "abweichend_von_regel": [],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "visitar",
+   "gruppe": "ar",
+   "formen": {
+    "yo": "visito",
+    "tu": "visitas",
+    "el": "visita",
+    "nosotros": "visitamos",
+    "vosotros": "visitáis",
+    "ellos": "visitan"
+   },
+   "abweichend_von_regel": [],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "preguntar",
+   "gruppe": "ar",
+   "formen": {
+    "yo": "pregunto",
+    "tu": "preguntas",
+    "el": "pregunta",
+    "nosotros": "preguntamos",
+    "vosotros": "preguntáis",
+    "ellos": "preguntan"
+   },
+   "abweichend_von_regel": [],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "necesitar",
+   "gruppe": "ar",
+   "formen": {
+    "yo": "necesito",
+    "tu": "necesitas",
+    "el": "necesita",
+    "nosotros": "necesitamos",
+    "vosotros": "necesitáis",
+    "ellos": "necesitan"
+   },
+   "abweichend_von_regel": [],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "llamarse",
+   "gruppe": "ar",
+   "formen": {
+    "yo": "me llamo",
+    "tu": "te llamas",
+    "el": "se llama",
+    "nosotros": "nos llamamos",
+    "vosotros": "os llamáis",
+    "ellos": "se llaman"
+   },
+   "abweichend_von_regel": [],
+   "reflexiv": true
+  },
+  {
+   "infinitiv": "nadar",
+   "gruppe": "ar",
+   "formen": {
+    "yo": "nado",
+    "tu": "nadas",
+    "el": "nada",
+    "nosotros": "nadamos",
+    "vosotros": "nadáis",
+    "ellos": "nadan"
+   },
+   "abweichend_von_regel": [],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "patinar",
+   "gruppe": "ar",
+   "formen": {
+    "yo": "patino",
+    "tu": "patinas",
+    "el": "patina",
+    "nosotros": "patinamos",
+    "vosotros": "patináis",
+    "ellos": "patinan"
+   },
+   "abweichend_von_regel": [],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "chatear",
+   "gruppe": "ar",
+   "formen": {
+    "yo": "chateo",
+    "tu": "chateas",
+    "el": "chatea",
+    "nosotros": "chateamos",
+    "vosotros": "chateáis",
+    "ellos": "chatean"
+   },
+   "abweichend_von_regel": [],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "coquetear",
+   "gruppe": "ar",
+   "formen": {
+    "yo": "coqueteo",
+    "tu": "coqueteas",
+    "el": "coquetea",
+    "nosotros": "coqueteamos",
+    "vosotros": "coqueteáis",
+    "ellos": "coquetean"
+   },
+   "abweichend_von_regel": [],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "cocinar",
+   "gruppe": "ar",
+   "formen": {
+    "yo": "cocino",
+    "tu": "cocinas",
+    "el": "cocina",
+    "nosotros": "cocinamos",
+    "vosotros": "cocináis",
+    "ellos": "cocinan"
+   },
+   "abweichend_von_regel": [],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "preparar",
+   "gruppe": "ar",
+   "formen": {
+    "yo": "preparo",
+    "tu": "preparas",
+    "el": "prepara",
+    "nosotros": "preparamos",
+    "vosotros": "preparáis",
+    "ellos": "preparan"
+   },
+   "abweichend_von_regel": [],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "tocar",
+   "gruppe": "ar",
+   "formen": {
+    "yo": "toco",
+    "tu": "tocas",
+    "el": "toca",
+    "nosotros": "tocamos",
+    "vosotros": "tocáis",
+    "ellos": "tocan"
+   },
+   "abweichend_von_regel": [],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "pasear",
+   "gruppe": "ar",
+   "formen": {
+    "yo": "paseo",
+    "tu": "paseas",
+    "el": "pasea",
+    "nosotros": "paseamos",
+    "vosotros": "paseáis",
+    "ellos": "pasean"
+   },
+   "abweichend_von_regel": [],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "terminar",
+   "gruppe": "ar",
+   "formen": {
+    "yo": "termino",
+    "tu": "terminas",
+    "el": "termina",
+    "nosotros": "terminamos",
+    "vosotros": "termináis",
+    "ellos": "terminan"
+   },
+   "abweichend_von_regel": [],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "viajar",
+   "gruppe": "ar",
+   "formen": {
+    "yo": "viajo",
+    "tu": "viajas",
+    "el": "viaja",
+    "nosotros": "viajamos",
+    "vosotros": "viajáis",
+    "ellos": "viajan"
+   },
+   "abweichend_von_regel": [],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "ordenar",
+   "gruppe": "ar",
+   "formen": {
+    "yo": "ordeno",
+    "tu": "ordenas",
+    "el": "ordena",
+    "nosotros": "ordenamos",
+    "vosotros": "ordenáis",
+    "ellos": "ordenan"
+   },
+   "abweichend_von_regel": [],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "ganar",
+   "gruppe": "ar",
+   "formen": {
+    "yo": "gano",
+    "tu": "ganas",
+    "el": "gana",
+    "nosotros": "ganamos",
+    "vosotros": "ganáis",
+    "ellos": "ganan"
+   },
+   "abweichend_von_regel": [],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "adivinar",
+   "gruppe": "ar",
+   "formen": {
+    "yo": "adivino",
+    "tu": "adivinas",
+    "el": "adivina",
+    "nosotros": "adivinamos",
+    "vosotros": "adivináis",
+    "ellos": "adivinan"
+   },
+   "abweichend_von_regel": [],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "apellidarse",
+   "gruppe": "ar",
+   "formen": {
+    "yo": "me apellido",
+    "tu": "te apellidas",
+    "el": "se apellida",
+    "nosotros": "nos apellidamos",
+    "vosotros": "os apellidáis",
+    "ellos": "se apellidan"
+   },
+   "abweichend_von_regel": [],
+   "reflexiv": true
+  },
+  {
+   "infinitiv": "pronunciar",
+   "gruppe": "ar",
+   "formen": {
+    "yo": "pronuncio",
+    "tu": "pronuncias",
+    "el": "pronuncia",
+    "nosotros": "pronunciamos",
+    "vosotros": "pronunciáis",
+    "ellos": "pronuncian"
+   },
+   "abweichend_von_regel": [],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "desayunar",
+   "gruppe": "ar",
+   "formen": {
+    "yo": "desayuno",
+    "tu": "desayunas",
+    "el": "desayuna",
+    "nosotros": "desayunamos",
+    "vosotros": "desayunáis",
+    "ellos": "desayunan"
+   },
+   "abweichend_von_regel": [],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "cenar",
+   "gruppe": "ar",
+   "formen": {
+    "yo": "ceno",
+    "tu": "cenas",
+    "el": "cena",
+    "nosotros": "cenamos",
+    "vosotros": "cenáis",
+    "ellos": "cenan"
+   },
+   "abweichend_von_regel": [],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "comer",
+   "gruppe": "er",
+   "formen": {
+    "yo": "como",
+    "tu": "comes",
+    "el": "come",
+    "nosotros": "comemos",
+    "vosotros": "coméis",
+    "ellos": "comen"
+   },
+   "abweichend_von_regel": [],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "leer",
+   "gruppe": "er",
+   "formen": {
+    "yo": "leo",
+    "tu": "lees",
+    "el": "lee",
+    "nosotros": "leemos",
+    "vosotros": "leéis",
+    "ellos": "leen"
+   },
+   "abweichend_von_regel": [],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "aprender",
+   "gruppe": "er",
+   "formen": {
+    "yo": "aprendo",
+    "tu": "aprendes",
+    "el": "aprende",
+    "nosotros": "aprendemos",
+    "vosotros": "aprendéis",
+    "ellos": "aprenden"
+   },
+   "abweichend_von_regel": [],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "responder",
+   "gruppe": "er",
+   "formen": {
+    "yo": "respondo",
+    "tu": "respondes",
+    "el": "responde",
+    "nosotros": "respondemos",
+    "vosotros": "respondéis",
+    "ellos": "responden"
+   },
+   "abweichend_von_regel": [],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "comprender",
+   "gruppe": "er",
+   "formen": {
+    "yo": "comprendo",
+    "tu": "comprendes",
+    "el": "comprende",
+    "nosotros": "comprendemos",
+    "vosotros": "comprendéis",
+    "ellos": "comprenden"
+   },
+   "abweichend_von_regel": [],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "correr",
+   "gruppe": "er",
+   "formen": {
+    "yo": "corro",
+    "tu": "corres",
+    "el": "corre",
+    "nosotros": "corremos",
+    "vosotros": "corréis",
+    "ellos": "corren"
+   },
+   "abweichend_von_regel": [],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "creer",
+   "gruppe": "er",
+   "formen": {
+    "yo": "creo",
+    "tu": "crees",
+    "el": "cree",
+    "nosotros": "creemos",
+    "vosotros": "creéis",
+    "ellos": "creen"
+   },
+   "abweichend_von_regel": [],
+   "reflexiv": false,
+   "hinweis_tabelle": "In der Tabelle steht „creeís“. Korrekt ist „creéis“; die App verwendet die korrigierte Form."
+  },
+  {
+   "infinitiv": "deber",
+   "gruppe": "er",
+   "formen": {
+    "yo": "debo",
+    "tu": "debes",
+    "el": "debe",
+    "nosotros": "debemos",
+    "vosotros": "debéis",
+    "ellos": "deben"
+   },
+   "abweichend_von_regel": [],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "vivir",
+   "gruppe": "ir",
+   "formen": {
+    "yo": "vivo",
+    "tu": "vives",
+    "el": "vive",
+    "nosotros": "vivimos",
+    "vosotros": "vivís",
+    "ellos": "viven"
+   },
+   "abweichend_von_regel": [],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "escribir",
+   "gruppe": "ir",
+   "formen": {
+    "yo": "escribo",
+    "tu": "escribes",
+    "el": "escribe",
+    "nosotros": "escribimos",
+    "vosotros": "escribís",
+    "ellos": "escriben"
+   },
+   "abweichend_von_regel": [],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "recibir",
+   "gruppe": "ir",
+   "formen": {
+    "yo": "recibo",
+    "tu": "recibes",
+    "el": "recibe",
+    "nosotros": "recibimos",
+    "vosotros": "recibís",
+    "ellos": "reciben"
+   },
+   "abweichend_von_regel": [],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "abrir",
+   "gruppe": "ir",
+   "formen": {
+    "yo": "abro",
+    "tu": "abres",
+    "el": "abre",
+    "nosotros": "abrimos",
+    "vosotros": "abrís",
+    "ellos": "abren"
+   },
+   "abweichend_von_regel": [],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "existir",
+   "gruppe": "ir",
+   "formen": {
+    "yo": "existo",
+    "tu": "existes",
+    "el": "existe",
+    "nosotros": "existimos",
+    "vosotros": "existís",
+    "ellos": "existen"
+   },
+   "abweichend_von_regel": [],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "discutir",
+   "gruppe": "ir",
+   "formen": {
+    "yo": "discuto",
+    "tu": "discutes",
+    "el": "discute",
+    "nosotros": "discutimos",
+    "vosotros": "discutís",
+    "ellos": "discuten"
+   },
+   "abweichend_von_regel": [],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "conocer",
+   "gruppe": "yo_irregular",
+   "formen": {
+    "yo": "conozco",
+    "tu": "conoces",
+    "el": "conoce",
+    "nosotros": "conocemos",
+    "vosotros": "conocéis",
+    "ellos": "conocen"
+   },
+   "abweichend_von_regel": [
+    "yo"
+   ],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "ver",
+   "gruppe": "yo_irregular",
+   "formen": {
+    "yo": "veo",
+    "tu": "ves",
+    "el": "ve",
+    "nosotros": "vemos",
+    "vosotros": "veis",
+    "ellos": "ven"
+   },
+   "abweichend_von_regel": [
+    "yo"
+   ],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "estar",
+   "gruppe": "yo_irregular",
+   "formen": {
+    "yo": "estoy",
+    "tu": "estás",
+    "el": "está",
+    "nosotros": "estamos",
+    "vosotros": "estáis",
+    "ellos": "están"
+   },
+   "abweichend_von_regel": [
+    "yo"
+   ],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "hacer",
+   "gruppe": "yo_irregular",
+   "formen": {
+    "yo": "hago",
+    "tu": "haces",
+    "el": "hace",
+    "nosotros": "hacemos",
+    "vosotros": "hacéis",
+    "ellos": "hacen"
+   },
+   "abweichend_von_regel": [
+    "yo"
+   ],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "saber",
+   "gruppe": "yo_irregular",
+   "formen": {
+    "yo": "sé",
+    "tu": "sabes",
+    "el": "sabe",
+    "nosotros": "sabemos",
+    "vosotros": "sabéis",
+    "ellos": "saben"
+   },
+   "abweichend_von_regel": [
+    "yo"
+   ],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "poner",
+   "gruppe": "yo_irregular",
+   "formen": {
+    "yo": "pongo",
+    "tu": "pones",
+    "el": "pone",
+    "nosotros": "ponemos",
+    "vosotros": "ponéis",
+    "ellos": "ponen"
+   },
+   "abweichend_von_regel": [
+    "yo"
+   ],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "traer",
+   "gruppe": "yo_irregular",
+   "formen": {
+    "yo": "traigo",
+    "tu": "traes",
+    "el": "trae",
+    "nosotros": "traemos",
+    "vosotros": "traéis",
+    "ellos": "traen"
+   },
+   "abweichend_von_regel": [
+    "yo"
+   ],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "salir",
+   "gruppe": "yo_irregular",
+   "formen": {
+    "yo": "salgo",
+    "tu": "sales",
+    "el": "sale",
+    "nosotros": "salimos",
+    "vosotros": "salís",
+    "ellos": "salen"
+   },
+   "abweichend_von_regel": [
+    "yo"
+   ],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "caer",
+   "gruppe": "yo_irregular",
+   "formen": {
+    "yo": "caigo",
+    "tu": "caes",
+    "el": "cae",
+    "nosotros": "caemos",
+    "vosotros": "caéis",
+    "ellos": "caen"
+   },
+   "abweichend_von_regel": [
+    "yo"
+   ],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "valer",
+   "gruppe": "yo_irregular",
+   "formen": {
+    "yo": "valgo",
+    "tu": "vales",
+    "el": "vale",
+    "nosotros": "valemos",
+    "vosotros": "valéis",
+    "ellos": "valen"
+   },
+   "abweichend_von_regel": [
+    "yo"
+   ],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "dar",
+   "gruppe": "yo_irregular",
+   "formen": {
+    "yo": "doy",
+    "tu": "das",
+    "el": "da",
+    "nosotros": "damos",
+    "vosotros": "dais",
+    "ellos": "dan"
+   },
+   "abweichend_von_regel": [
+    "yo"
+   ],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "traducir",
+   "gruppe": "yo_irregular",
+   "formen": {
+    "yo": "traduzco",
+    "tu": "traduces",
+    "el": "traduce",
+    "nosotros": "traducimos",
+    "vosotros": "traducís",
+    "ellos": "traducen"
+   },
+   "abweichend_von_regel": [
+    "yo"
+   ],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "conducir",
+   "gruppe": "yo_irregular",
+   "formen": {
+    "yo": "conduzco",
+    "tu": "conduces",
+    "el": "conduce",
+    "nosotros": "conducimos",
+    "vosotros": "conducís",
+    "ellos": "conducen"
+   },
+   "abweichend_von_regel": [
+    "yo"
+   ],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "tener",
+   "gruppe": "e_ie",
+   "formen": {
+    "yo": "tengo",
+    "tu": "tienes",
+    "el": "tiene",
+    "nosotros": "tenemos",
+    "vosotros": "tenéis",
+    "ellos": "tienen"
+   },
+   "abweichend_von_regel": [
+    "yo",
+    "tu",
+    "el",
+    "ellos"
+   ],
+   "reflexiv": false,
+   "doppelte_unregelmaessigkeit": true
+  },
+  {
+   "infinitiv": "pensar",
+   "gruppe": "e_ie",
+   "formen": {
+    "yo": "pienso",
+    "tu": "piensas",
+    "el": "piensa",
+    "nosotros": "pensamos",
+    "vosotros": "pensáis",
+    "ellos": "piensan"
+   },
+   "abweichend_von_regel": [
+    "yo",
+    "tu",
+    "el",
+    "ellos"
+   ],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "querer",
+   "gruppe": "e_ie",
+   "formen": {
+    "yo": "quiero",
+    "tu": "quieres",
+    "el": "quiere",
+    "nosotros": "queremos",
+    "vosotros": "queréis",
+    "ellos": "quieren"
+   },
+   "abweichend_von_regel": [
+    "yo",
+    "tu",
+    "el",
+    "ellos"
+   ],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "sentir",
+   "gruppe": "e_ie",
+   "formen": {
+    "yo": "siento",
+    "tu": "sientes",
+    "el": "siente",
+    "nosotros": "sentimos",
+    "vosotros": "sentís",
+    "ellos": "sienten"
+   },
+   "abweichend_von_regel": [
+    "yo",
+    "tu",
+    "el",
+    "ellos"
+   ],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "empezar",
+   "gruppe": "e_ie",
+   "formen": {
+    "yo": "empiezo",
+    "tu": "empiezas",
+    "el": "empieza",
+    "nosotros": "empezamos",
+    "vosotros": "empezáis",
+    "ellos": "empiezan"
+   },
+   "abweichend_von_regel": [
+    "yo",
+    "tu",
+    "el",
+    "ellos"
+   ],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "venir",
+   "gruppe": "e_ie",
+   "formen": {
+    "yo": "vengo",
+    "tu": "vienes",
+    "el": "viene",
+    "nosotros": "venimos",
+    "vosotros": "venís",
+    "ellos": "vienen"
+   },
+   "abweichend_von_regel": [
+    "yo",
+    "tu",
+    "el",
+    "ellos"
+   ],
+   "reflexiv": false,
+   "doppelte_unregelmaessigkeit": true
+  },
+  {
+   "infinitiv": "perder",
+   "gruppe": "e_ie",
+   "formen": {
+    "yo": "pierdo",
+    "tu": "pierdes",
+    "el": "pierde",
+    "nosotros": "perdemos",
+    "vosotros": "perdéis",
+    "ellos": "pierden"
+   },
+   "abweichend_von_regel": [
+    "yo",
+    "tu",
+    "el",
+    "ellos"
+   ],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "mentir",
+   "gruppe": "e_ie",
+   "formen": {
+    "yo": "miento",
+    "tu": "mientes",
+    "el": "miente",
+    "nosotros": "mentimos",
+    "vosotros": "mentís",
+    "ellos": "mienten"
+   },
+   "abweichend_von_regel": [
+    "yo",
+    "tu",
+    "el",
+    "ellos"
+   ],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "cerrar",
+   "gruppe": "e_ie",
+   "formen": {
+    "yo": "cierro",
+    "tu": "cierras",
+    "el": "cierra",
+    "nosotros": "cerramos",
+    "vosotros": "cerráis",
+    "ellos": "cierran"
+   },
+   "abweichend_von_regel": [
+    "yo",
+    "tu",
+    "el",
+    "ellos"
+   ],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "poder",
+   "gruppe": "o_ue",
+   "formen": {
+    "yo": "puedo",
+    "tu": "puedes",
+    "el": "puede",
+    "nosotros": "podemos",
+    "vosotros": "podéis",
+    "ellos": "pueden"
+   },
+   "abweichend_von_regel": [
+    "yo",
+    "tu",
+    "el",
+    "ellos"
+   ],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "contar",
+   "gruppe": "o_ue",
+   "formen": {
+    "yo": "cuento",
+    "tu": "cuentas",
+    "el": "cuenta",
+    "nosotros": "contamos",
+    "vosotros": "contáis",
+    "ellos": "cuentan"
+   },
+   "abweichend_von_regel": [
+    "yo",
+    "tu",
+    "el",
+    "ellos"
+   ],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "dormir",
+   "gruppe": "o_ue",
+   "formen": {
+    "yo": "duermo",
+    "tu": "duermes",
+    "el": "duerme",
+    "nosotros": "dormimos",
+    "vosotros": "dormís",
+    "ellos": "duermen"
+   },
+   "abweichend_von_regel": [
+    "yo",
+    "tu",
+    "el",
+    "ellos"
+   ],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "jugar",
+   "gruppe": "o_ue",
+   "formen": {
+    "yo": "juego",
+    "tu": "juegas",
+    "el": "juega",
+    "nosotros": "jugamos",
+    "vosotros": "jugáis",
+    "ellos": "juegan"
+   },
+   "abweichend_von_regel": [
+    "yo",
+    "tu",
+    "el",
+    "ellos"
+   ],
+   "reflexiv": false,
+   "hinweis_tabelle": "Die Tabelle führt jugar in der Gruppe o → ue. Tatsächlich wechselt hier u → ue (juego)."
+  },
+  {
+   "infinitiv": "probar",
+   "gruppe": "o_ue",
+   "formen": {
+    "yo": "pruebo",
+    "tu": "pruebas",
+    "el": "prueba",
+    "nosotros": "probamos",
+    "vosotros": "probáis",
+    "ellos": "prueban"
+   },
+   "abweichend_von_regel": [
+    "yo",
+    "tu",
+    "el",
+    "ellos"
+   ],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "costar",
+   "gruppe": "o_ue",
+   "formen": {
+    "yo": "cuesto",
+    "tu": "cuestas",
+    "el": "cuesta",
+    "nosotros": "costamos",
+    "vosotros": "costáis",
+    "ellos": "cuestan"
+   },
+   "abweichend_von_regel": [
+    "yo",
+    "tu",
+    "el",
+    "ellos"
+   ],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "apostar",
+   "gruppe": "o_ue",
+   "formen": {
+    "yo": "apuesto",
+    "tu": "apuestas",
+    "el": "apuesta",
+    "nosotros": "apostamos",
+    "vosotros": "apostáis",
+    "ellos": "apuestan"
+   },
+   "abweichend_von_regel": [
+    "yo",
+    "tu",
+    "el",
+    "ellos"
+   ],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "almorzar",
+   "gruppe": "o_ue",
+   "formen": {
+    "yo": "almuerzo",
+    "tu": "almuerzas",
+    "el": "almuerza",
+    "nosotros": "almorzamos",
+    "vosotros": "almorzáis",
+    "ellos": "almuerzan"
+   },
+   "abweichend_von_regel": [
+    "yo",
+    "tu",
+    "el",
+    "ellos"
+   ],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "decir",
+   "gruppe": "e_i",
+   "formen": {
+    "yo": "digo",
+    "tu": "dices",
+    "el": "dice",
+    "nosotros": "decimos",
+    "vosotros": "decís",
+    "ellos": "dicen"
+   },
+   "abweichend_von_regel": [
+    "yo",
+    "tu",
+    "el",
+    "ellos"
+   ],
+   "reflexiv": false,
+   "doppelte_unregelmaessigkeit": true
+  },
+  {
+   "infinitiv": "pedir",
+   "gruppe": "e_i",
+   "formen": {
+    "yo": "pido",
+    "tu": "pides",
+    "el": "pide",
+    "nosotros": "pedimos",
+    "vosotros": "pedís",
+    "ellos": "piden"
+   },
+   "abweichend_von_regel": [
+    "yo",
+    "tu",
+    "el",
+    "ellos"
+   ],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "repetir",
+   "gruppe": "e_i",
+   "formen": {
+    "yo": "repito",
+    "tu": "repites",
+    "el": "repite",
+    "nosotros": "repetimos",
+    "vosotros": "repetís",
+    "ellos": "repiten"
+   },
+   "abweichend_von_regel": [
+    "yo",
+    "tu",
+    "el",
+    "ellos"
+   ],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "reír",
+   "gruppe": "e_i",
+   "formen": {
+    "yo": "río",
+    "tu": "ríes",
+    "el": "ríe",
+    "nosotros": "reímos",
+    "vosotros": "reís",
+    "ellos": "ríen"
+   },
+   "abweichend_von_regel": [
+    "yo",
+    "tu",
+    "el",
+    "ellos"
+   ],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "construir",
+   "gruppe": "i_y",
+   "formen": {
+    "yo": "construyo",
+    "tu": "construyes",
+    "el": "construye",
+    "nosotros": "construimos",
+    "vosotros": "construís",
+    "ellos": "construyen"
+   },
+   "abweichend_von_regel": [
+    "yo",
+    "tu",
+    "el",
+    "ellos"
+   ],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "oír",
+   "gruppe": "i_y",
+   "formen": {
+    "yo": "oigo",
+    "tu": "oyes",
+    "el": "oye",
+    "nosotros": "oímos",
+    "vosotros": "oís",
+    "ellos": "oyen"
+   },
+   "abweichend_von_regel": [
+    "yo",
+    "tu",
+    "el",
+    "ellos"
+   ],
+   "reflexiv": false,
+   "doppelte_unregelmaessigkeit": true
+  },
+  {
+   "infinitiv": "intuir",
+   "gruppe": "i_y",
+   "formen": {
+    "yo": "intuyo",
+    "tu": "intuyes",
+    "el": "intuye",
+    "nosotros": "intuimos",
+    "vosotros": "intuís",
+    "ellos": "intuyen"
+   },
+   "abweichend_von_regel": [
+    "yo",
+    "tu",
+    "el",
+    "ellos"
+   ],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "destruir",
+   "gruppe": "i_y",
+   "formen": {
+    "yo": "destruyo",
+    "tu": "destruyes",
+    "el": "destruye",
+    "nosotros": "destruimos",
+    "vosotros": "destruís",
+    "ellos": "destruyen"
+   },
+   "abweichend_von_regel": [
+    "yo",
+    "tu",
+    "el",
+    "ellos"
+   ],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "ser",
+   "gruppe": "absolut_irregular",
+   "formen": {
+    "yo": "soy",
+    "tu": "eres",
+    "el": "es",
+    "nosotros": "somos",
+    "vosotros": "sois",
+    "ellos": "son"
+   },
+   "abweichend_von_regel": [
+    "yo",
+    "tu",
+    "el",
+    "nosotros",
+    "vosotros",
+    "ellos"
+   ],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "ir",
+   "gruppe": "absolut_irregular",
+   "formen": {
+    "yo": "voy",
+    "tu": "vas",
+    "el": "va",
+    "nosotros": "vamos",
+    "vosotros": "vais",
+    "ellos": "van"
+   },
+   "abweichend_von_regel": [
+    "yo",
+    "tu",
+    "el",
+    "nosotros",
+    "vosotros",
+    "ellos"
+   ],
+   "reflexiv": false
+  },
+  {
+   "infinitiv": "haber",
+   "gruppe": "absolut_irregular",
+   "formen": {
+    "unpersoenlich": "hay"
+   },
+   "hinweis_tabelle": "Tabelle nennt nur die unpersönliche Form „hay“ (in der Zeile der 3. Person Singular)."
+  }
+ ]
+};
+if (typeof module !== "undefined") module.exports = VERBDATEN;
+</script>
+  <script>
+/* ---- logik.js ---- */
+/* Übungslogik: Level, Gewichtung, Aufgabenauswahl, Antwortprüfung.
+   Läuft im Browser (globales Objekt „Logik“) und in Node (für die Tests). */
+(function (global) {
+  'use strict';
+
+  // ---------------------------------------------------------------------------
+  // Pronomen
+  // ---------------------------------------------------------------------------
+  var PRONOMEN = ['yo', 'tú', 'él', 'ella', 'usted', 'nosotros', 'vosotros', 'ellos', 'ellas', 'ustedes'];
+  // Welche Tabellenzeile zu welchem Pronomen gehört
+  var PRONOMEN_FORM = {
+    'yo': 'yo', 'tú': 'tu', 'él': 'el', 'ella': 'el', 'usted': 'el',
+    'nosotros': 'nosotros', 'vosotros': 'vosotros',
+    'ellos': 'ellos', 'ellas': 'ellos', 'ustedes': 'ellos'
+  };
+  // Subjektpronomen, die nicht vor der Verbform stehen dürfen
+  var SUBJEKTPRONOMEN = ['yo', 'tu', 'tú', 'el', 'él', 'ella', 'usted', 'ud', 'ud.', 'nosotros', 'nosotras',
+    'vosotros', 'vosotras', 'ellos', 'ellas', 'ustedes', 'uds', 'uds.'];
+
+  // ---------------------------------------------------------------------------
+  // Verbgruppen
+  // ---------------------------------------------------------------------------
+  var GRUPPEN = {
+    ar: { name: 'regelmäßige Verben auf -ar', unregelmaessig: false },
+    er: { name: 'regelmäßige Verben auf -er', unregelmaessig: false },
+    ir: { name: 'regelmäßige Verben auf -ir', unregelmaessig: false },
+    yo_irregular: { name: 'Verben mit unregelmäßiger 1. Person', unregelmaessig: true },
+    absolut_irregular: { name: 'ser, ir und hay', unregelmaessig: true },
+    e_ie: { name: 'Verben mit e → ie', unregelmaessig: true },
+    o_ue: { name: 'Verben mit o → ue', unregelmaessig: true },
+    e_i: { name: 'Verben mit e → i', unregelmaessig: true },
+    i_y: { name: 'Verben mit i → y', unregelmaessig: true }
+  };
+
+  // ---------------------------------------------------------------------------
+  // Level und Anteile der Gruppen (Summe je Level = 1).
+  // Herleitung siehe DOKUMENTATION.md:
+  //   Mischlevel: regelmäßiger Teil -ar 40 % / -er 30 % / -ir 30 %;
+  //   unregelmäßiger Teil: 50 % zuletzt eingeführte Gruppe, Rest gleichmäßig.
+  // ---------------------------------------------------------------------------
+  function mix(regelAnteil, regelGruppen, neueste, aeltere) {
+    var a = {};
+    var regelGewichte = { ar: 0.4, er: 0.3, ir: 0.3 };
+    var summe = 0;
+    regelGruppen.forEach(function (g) { summe += regelGewichte[g]; });
+    regelGruppen.forEach(function (g) { a[g] = regelAnteil * regelGewichte[g] / summe; });
+    var unreg = 1 - regelAnteil;
+    if (aeltere.length === 0) {
+      a[neueste] = unreg;
+    } else {
+      a[neueste] = unreg * 0.5;
+      aeltere.forEach(function (g) { a[g] = unreg * 0.5 / aeltere.length; });
+    }
+    return a;
+  }
+
+  var REGEL = ['ar', 'er', 'ir'];
+  var LEVEL = [
+    { id: '1', titel: 'Regelmäßige Verben auf -ar', anteile: { ar: 1 } },
+    { id: '2', titel: 'Regelmäßige Verben auf -er', anteile: { er: 1 } },
+    { id: '3', titel: 'Mischung: regelmäßige Verben auf -ar und -er', anteile: { ar: 0.5, er: 0.5 } },
+    { id: '4', titel: 'Regelmäßige Verben auf -ir', anteile: { ir: 1 } },
+    { id: '5', titel: 'Mischung: regelmäßige Verben auf -ar, -er und -ir', anteile: { ar: 0.4, er: 0.3, ir: 0.3 } },
+    { id: '6', titel: 'Verben mit unregelmäßiger 1. Person', anteile: { yo_irregular: 1 } },
+    { id: '7', titel: 'Mischung: regelmäßige Verben und unregelmäßige 1. Person', anteile: mix(0.7, REGEL, 'yo_irregular', []) },
+    { id: '7,5', titel: 'ser, ir und hay', anteile: { absolut_irregular: 1 } },
+    { id: '8', titel: 'Verben mit e → ie', anteile: { e_ie: 1 } },
+    { id: '9', titel: 'Mischung aller bisherigen Gruppen', anteile: mix(0.6, REGEL, 'e_ie', ['yo_irregular', 'absolut_irregular']) },
+    { id: '10', titel: 'Verben mit o → ue', hinweis: 'Besonderheit: Bei jugar wechselt u → ue (juego). Die Tabelle führt jugar in dieser Gruppe.', anteile: { o_ue: 1 } },
+    { id: '11', titel: 'Mischung aller bisherigen Gruppen', anteile: mix(0.5, REGEL, 'o_ue', ['yo_irregular', 'absolut_irregular', 'e_ie']) },
+    { id: '12', titel: 'Verben mit e → i', anteile: { e_i: 1 } },
+    { id: '13', titel: 'Mischung aller bisherigen Gruppen', anteile: mix(0.4, REGEL, 'e_i', ['yo_irregular', 'absolut_irregular', 'e_ie', 'o_ue']) },
+    { id: '14', titel: 'Verben mit i → y', hinweis: 'Bei diesen Verben wird ein y eingeschoben (construir → construyo). Die Tabelle schreibt „i + y“.', anteile: { i_y: 1 } },
+    { id: '15', titel: 'Mischung aller unregelmäßigen Verben', anteile: mix(0, [], 'i_y', ['yo_irregular', 'absolut_irregular', 'e_ie', 'o_ue', 'e_i']) }
+  ];
+  var LEVEL_IDS = LEVEL.map(function (l) { return l.id; });
+  var SERIE_ZIEL = 10;
+
+  // Pronomen-Gewichtung je Verbgruppe
+  var STAMMWECHSEL_90 = ['e_ie', 'o_ue', 'i_y'];
+  var ANTEIL_UNREG_PRONOMEN = 0.9;
+  var ANTEIL_YO = 0.6;
+  // Verbgewichte in der Gruppe ser/ir/hay
+  var ANTEIL_HAY = 0.15;
+
+  function levelInfo(id) {
+    for (var i = 0; i < LEVEL.length; i++) if (LEVEL[i].id === id) return LEVEL[i];
+    return null;
+  }
+  function naechstesLevel(id) {
+    var i = LEVEL_IDS.indexOf(id);
+    return (i >= 0 && i < LEVEL_IDS.length - 1) ? LEVEL_IDS[i + 1] : null;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Zufall
+  // ---------------------------------------------------------------------------
+  function waehle(eintraege, rng) { // eintraege: [[wert, gewicht], ...]
+    var summe = 0, i;
+    for (i = 0; i < eintraege.length; i++) summe += eintraege[i][1];
+    var r = rng() * summe;
+    for (i = 0; i < eintraege.length; i++) {
+      r -= eintraege[i][1];
+      if (r < 0) return eintraege[i][0];
+    }
+    return eintraege[eintraege.length - 1][0];
+  }
+
+  function pronomenGewichte(verb) {
+    var g = verb.gruppe;
+    if (verb.infinitiv === 'haber') return [[null, 1]];
+    if (g === 'yo_irregular') {
+      return PRONOMEN.map(function (p) { return [p, p === 'yo' ? ANTEIL_YO : (1 - ANTEIL_YO) / 9]; });
+    }
+    if (STAMMWECHSEL_90.indexOf(g) >= 0) {
+      var unreg = PRONOMEN.filter(function (p) { return verb.abweichend_von_regel.indexOf(PRONOMEN_FORM[p]) >= 0; });
+      var reg = PRONOMEN.filter(function (p) { return unreg.indexOf(p) < 0; });
+      if (unreg.length === 0 || reg.length === 0) return PRONOMEN.map(function (p) { return [p, 1]; });
+      return PRONOMEN.map(function (p) {
+        return [p, unreg.indexOf(p) >= 0 ? ANTEIL_UNREG_PRONOMEN / unreg.length : (1 - ANTEIL_UNREG_PRONOMEN) / reg.length];
+      });
+    }
+    return PRONOMEN.map(function (p) { return [p, 1]; });
+  }
+
+  function verbGewichte(verben) {
+    var hatHay = verben.some(function (v) { return v.infinitiv === 'haber'; });
+    if (!hatHay) return verben.map(function (v) { return [v, 1]; });
+    var andere = verben.length - 1;
+    return verben.map(function (v) { return [v, v.infinitiv === 'haber' ? ANTEIL_HAY : (1 - ANTEIL_HAY) / andere]; });
+  }
+
+  // ---------------------------------------------------------------------------
+  // Aufgaben
+  // ---------------------------------------------------------------------------
+  function erstelleAufgabe(verb, pronomen) {
+    var loesung = pronomen === null ? verb.formen.unpersoenlich : verb.formen[PRONOMEN_FORM[pronomen]];
+    var hinweis = verb.hinweis_tabelle || null;
+    // Der creer-Hinweis betrifft nur die vosotros-Form
+    if (verb.infinitiv === 'creer' && pronomen !== 'vosotros') hinweis = null;
+    return {
+      infinitiv: verb.infinitiv,
+      gruppe: verb.gruppe,
+      pronomen: pronomen,
+      loesung: loesung,
+      reflexiv: !!verb.reflexiv,
+      hinweis: hinweis,
+      schluessel: verb.infinitiv + '|' + pronomen
+    };
+  }
+
+  function Generator(daten, rng) {
+    this.verben = daten.verben;
+    this.rng = rng || Math.random;
+    this.letzte = null;
+    this.letztesVerb = null;
+    this.wiederholungen = []; // {aufgabe, faellig}
+    this.level = null;
+  }
+
+  Generator.prototype.verbenDerGruppe = function (gruppe) {
+    return this.verben.filter(function (v) { return v.gruppe === gruppe; });
+  };
+
+  Generator.prototype.zufallsAufgabe = function (levelId) {
+    var info = levelInfo(levelId);
+    var gruppen = Object.keys(info.anteile).filter(function (g) { return info.anteile[g] > 0; })
+      .map(function (g) { return [g, info.anteile[g]]; });
+    var gruppe = waehle(gruppen, this.rng);
+    var verb = waehle(verbGewichte(this.verbenDerGruppe(gruppe)), this.rng);
+    var pronomen = waehle(pronomenGewichte(verb), this.rng);
+    return erstelleAufgabe(verb, pronomen);
+  };
+
+  Generator.prototype.naechste = function (levelId) {
+    if (this.level !== levelId) { this.wiederholungen = []; this.level = levelId; }
+    var self = this;
+    this.wiederholungen.forEach(function (w) { w.faellig -= 1; });
+    // fällige Wiederholung zuerst
+    for (var i = 0; i < this.wiederholungen.length; i++) {
+      var w = this.wiederholungen[i];
+      if (w.faellig <= 0 && (!this.letzte || w.aufgabe.schluessel !== this.letzte.schluessel)) {
+        this.wiederholungen.splice(i, 1);
+        return this.merke(w.aufgabe, true);
+      }
+    }
+    var aufgabe, versuche = 0;
+    do {
+      aufgabe = this.zufallsAufgabe(levelId);
+      versuche++;
+    } while (versuche < 50 && this.letzte && (
+      aufgabe.schluessel === self.letzte.schluessel ||
+      // dasselbe Verb nicht direkt nacheinander, falls die Gruppe genug Auswahl hat
+      // (bei ser/ir/hay würde das sonst die Gewichtung verzerren)
+      (aufgabe.infinitiv === self.letzte.infinitiv && self.verbenDerGruppe(aufgabe.gruppe).length > 3)
+    ));
+    return this.merke(aufgabe, false);
+  };
+
+  Generator.prototype.merke = function (aufgabe, istWiederholung) {
+    this.letzte = aufgabe;
+    var kopie = {};
+    for (var k in aufgabe) kopie[k] = aufgabe[k];
+    kopie.wiederholung = istWiederholung;
+    return kopie;
+  };
+
+  // Nach einer falschen Erstantwort: Aufgabe kommt 3–5 Aufgaben später erneut
+  Generator.prototype.spaeterWiederholen = function (aufgabe) {
+    var bereits = this.wiederholungen.some(function (w) { return w.aufgabe.schluessel === aufgabe.schluessel; });
+    if (bereits) return;
+    var kopie = {};
+    for (var k in aufgabe) if (k !== 'wiederholung') kopie[k] = aufgabe[k];
+    this.wiederholungen.push({ aufgabe: kopie, faellig: 3 + Math.floor(this.rng() * 3) });
+  };
+
+  function aufgabenText(aufgabe) {
+    if (aufgabe.pronomen === null) return '(unpersönlich) haber →';
+    return '(' + aufgabe.pronomen + ') ' + aufgabe.infinitiv + ' →';
+  }
+
+  // ---------------------------------------------------------------------------
+  // Antwortprüfung
+  // ---------------------------------------------------------------------------
+  function normalisiere(text) {
+    return String(text || '').normalize('NFC').replace(/\s+/g, ' ').trim().toLocaleLowerCase('es');
+  }
+  // Entfernt alle Akzente und sonstigen diakritischen Zeichen
+  function ohneAkzent(text) {
+    return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').normalize('NFC');
+  }
+  // Akzente werden nicht bewertet: fehlende, falsch gesetzte und zusätzliche Akzente sind egal
+  function gleichOhneAkzente(eingabe, loesung) {
+    return ohneAkzent(eingabe) === ohneAkzent(loesung);
+  }
+
+  /* Ergebnis:
+     { ergebnis: 'richtig' | 'richtig_akzent_abweichend' | 'falsch' | 'leer',
+       hinweis: null | 'pronomen' | 'reflexiv' } */
+  function pruefe(eingabeRoh, loesungRoh) {
+    var eingabe = normalisiere(eingabeRoh);
+    var loesung = normalisiere(loesungRoh);
+    if (!eingabe) return { ergebnis: 'leer', hinweis: null };
+    var woerter = eingabe.split(' ');
+    var loesungsWoerter = loesung.split(' ');
+    if (woerter.length > 1 && SUBJEKTPRONOMEN.indexOf(ohneAkzent(woerter[0])) >= 0 && SUBJEKTPRONOMEN.indexOf(loesungsWoerter[0]) < 0) {
+      return { ergebnis: 'falsch', hinweis: 'pronomen' };
+    }
+    if (eingabe === loesung) return { ergebnis: 'richtig', hinweis: null };
+    if (gleichOhneAkzente(eingabe, loesung)) return { ergebnis: 'richtig_akzent_abweichend', hinweis: null };
+    if (loesungsWoerter.length === 2) {
+      var verbteil = loesungsWoerter[1];
+      if (gleichOhneAkzente(eingabe, verbteil)) return { ergebnis: 'falsch', hinweis: 'reflexiv' };
+    }
+    return { ergebnis: 'falsch', hinweis: null };
+  }
+
+  // ---------------------------------------------------------------------------
+  // Lernstand
+  // ---------------------------------------------------------------------------
+  function neuerLernstand(code) {
+    return { code: code, level: '1', serie: 0, bearbeitet: 0, richtig: 0, stand: 0 };
+  }
+
+  /* Wertet eine Erstantwort aus und gibt den neuen Lernstand zurück.
+     Rückgabe: { stand, aufgestiegen: bool, alleGeschafft: bool } */
+  function werteErstantwortAus(lernstand, richtig) {
+    var s = {};
+    for (var k in lernstand) s[k] = lernstand[k];
+    s.bearbeitet += 1;
+    var aufgestiegen = false, alleGeschafft = false;
+    if (richtig) {
+      s.richtig += 1;
+      s.serie += 1;
+      if (s.serie >= SERIE_ZIEL) {
+        s.serie = 0;
+        var n = naechstesLevel(s.level);
+        if (n) { s.level = n; aufgestiegen = true; } else { alleGeschafft = true; }
+      }
+    } else {
+      s.serie = 0;
+    }
+    return { stand: s, aufgestiegen: aufgestiegen, alleGeschafft: alleGeschafft };
+  }
+
+  // ---------------------------------------------------------------------------
+  // Fortsetzungscode: 12 Zeichen, ohne verwechselbare Zeichen (0/O, 1/I)
+  // ---------------------------------------------------------------------------
+  var CODE_ZEICHEN = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // 32 Zeichen → 60 Bit Zufall
+  function erzeugeCode(zufallsBytes) {
+    var bytes = zufallsBytes(12), code = '';
+    for (var i = 0; i < 12; i++) code += CODE_ZEICHEN[bytes[i] % 32]; // 256 ist durch 32 teilbar: gleichverteilt
+    return code;
+  }
+  function bereinigeCode(eingabe) {
+    var c = String(eingabe || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+    return /^[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]{12}$/.test(c) ? c : null;
+  }
+  function zeigeCode(code) {
+    return code.slice(0, 4) + '-' + code.slice(4, 8) + '-' + code.slice(8, 12);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Zusatzverben von Lehrkräften (Datei zusatzverben.txt)
+  // Je Zeile: Infinitiv; yo-Form – unter der Überschrift der passenden Gruppe.
+  // Die übrigen fünf Formen bildet die App selbst.
+  // ---------------------------------------------------------------------------
+  var ZUSATZ_GRUPPEN = {
+    'ar': 'ar', 'er': 'er', 'ir': 'ir',
+    '1.person': 'yo_irregular', '1person': 'yo_irregular', 'erstePerson': 'yo_irregular', 'yo': 'yo_irregular',
+    'e-ie': 'e_ie', 'eie': 'e_ie', 'o-ue': 'o_ue', 'oue': 'o_ue', 'e-i': 'e_i', 'ei': 'e_i', 'i-y': 'i_y', 'iy': 'i_y'
+  };
+  var ZUSATZ_UEBERSCHRIFT = {
+    ar: '[ar]', er: '[er]', ir: '[ir]', yo_irregular: '[1. Person]', e_ie: '[e-ie]', o_ue: '[o-ue]', e_i: '[e-i]', i_y: '[i-y]'
+  };
+  var ENDUNGEN = { ar: ['o', 'as', 'a', 'amos', 'áis', 'an'], er: ['o', 'es', 'e', 'emos', 'éis', 'en'], ir: ['o', 'es', 'e', 'imos', 'ís', 'en'] };
+  var FORM_SCHLUESSEL = ['yo', 'tu', 'el', 'nosotros', 'vosotros', 'ellos'];
+  var REFLEXIV = ['me', 'te', 'se', 'nos', 'os', 'se'];
+  var YO_OHNE_O = ['sé', 'doy', 'estoy', 'voy', 'soy', 'he'];
+
+  function gruppeAusUeberschrift(text) {
+    var k = ohneAkzent(text.toLowerCase())
+      .replace(/→|->|–|—/g, '-').replace(/\s+/g, '').replace(/^-/, '').replace(/^verbos?/, '');
+    if (ZUSATZ_GRUPPEN[k]) return ZUSATZ_GRUPPEN[k];
+    if (/^(1|erste|1\.)/.test(k) || k.indexOf('person') >= 0) return 'yo_irregular';
+    return null;
+  }
+
+  function ersetzeLetztes(stamm, von, nach) {
+    var i = stamm.lastIndexOf(von);
+    return i < 0 ? null : stamm.slice(0, i) + nach + stamm.slice(i + von.length);
+  }
+  function endetMitVokal(s) { return /[aeo]$/.test(ohneAkzent(s)); }
+
+  /* Bildet alle sechs Formen. Ergebnis: { fehler, warnungen, verb } */
+  function bildeFormen(infinitivRoh, gruppe, yoRoh) {
+    var fehler = [], warnungen = [];
+    var inf = normalisiere(infinitivRoh), yo = normalisiere(yoRoh);
+    if (!/^[a-zñáéíóúü]+$/.test(inf)) return { fehler: ['Der Infinitiv enthält ungültige Zeichen oder Leerzeichen.'], warnungen: [] };
+    var reflexiv = /(ar|er|ir|ír)se$/.test(inf);
+    var basis = reflexiv ? inf.slice(0, -2) : inf;
+    var endung = ohneAkzent(basis).slice(-2);
+    if (!ENDUNGEN[endung]) return { fehler: ['Ein Infinitiv endet auf -ar, -er oder -ir (bzw. -arse, -erse, -irse).'], warnungen: [] };
+    if ((gruppe === 'ar' || gruppe === 'er' || gruppe === 'ir') && endung !== gruppe) {
+      return { fehler: ['Das Verb endet auf -' + endung + ', steht aber in der Gruppe [' + gruppe + '].'], warnungen: [] };
+    }
+    if (!yo) return { fehler: ['Die yo-Form fehlt. Schreibe sie hinter ein Semikolon, z. B. „cantar; canto“.'], warnungen: [] };
+    if (reflexiv) yo = yo.replace(/^me /, '');
+    if (!/^[a-zñáéíóúü]+$/.test(yo)) return { fehler: ['Die yo-Form darf nur ein Wort sein (ohne „yo“; bei reflexiven Verben ohne oder mit „me“).'], warnungen: [] };
+
+    var stamm = basis.slice(0, -2);
+    var end = ENDUNGEN[endung];
+    var regelYo = stamm + 'o';
+
+    // Stamm für tú, él/ella/usted, ellos/ellas/ustedes
+    var schuhStamm = stamm;
+    if (gruppe === 'e_ie') schuhStamm = ersetzeLetztes(stamm, 'e', 'ie');
+    else if (gruppe === 'o_ue') schuhStamm = ersetzeLetztes(stamm, 'o', 'ue') || ersetzeLetztes(stamm, 'u', 'ue');
+    else if (gruppe === 'e_i') schuhStamm = ersetzeLetztes(stamm, 'e', 'i');
+    else if (gruppe === 'i_y') {
+      schuhStamm = stamm + 'y';
+      if (!/(uir|oír|oir)$/.test(basis)) warnungen.push('Zur Gruppe i → y gehören normalerweise Verben auf -uir.');
+    }
+    if (schuhStamm === null) {
+      var vokal = { e_ie: 'e', o_ue: 'o', e_i: 'e' }[gruppe];
+      return { fehler: ['Im Stamm „' + stamm + '“ gibt es kein „' + vokal + '“ für den Wechsel. Stimmt die Gruppe?'], warnungen: [] };
+    }
+    // Akzente aus der yo-Form übernehmen (envío → envías, río → ríes)
+    if (/o$/.test(yo)) {
+      var yoStamm = yo.slice(0, -1);
+      if (yoStamm !== schuhStamm && ohneAkzent(yoStamm) === ohneAkzent(schuhStamm)) schuhStamm = yoStamm;
+    }
+
+    var nosotros = stamm + end[3], vosotros = stamm + end[4];
+    if (endung === 'ir' && endetMitVokal(stamm)) nosotros = stamm + 'ímos';           // oímos, reímos
+    if (!/[aeiouáéíóú]/.test(stamm)) vosotros = stamm + ohneAkzent(end[4]);          // veis, dais
+    var formen = [yo, schuhStamm + end[1], schuhStamm + end[2], nosotros, vosotros, schuhStamm + end[5]];
+
+    // Plausibilitätsprüfungen (nur Hinweise)
+    if (!/o$/.test(yo) && YO_OHNE_O.indexOf(yo) < 0) warnungen.push('Die yo-Form endet nicht auf -o. Bitte prüfen.');
+    var yoRegelmaessig = ohneAkzent(yo) === ohneAkzent(regelYo);
+    if ((gruppe === 'ar' || gruppe === 'er' || gruppe === 'ir') && !yoRegelmaessig) {
+      warnungen.push('Die yo-Form ist nicht regelmäßig (regelmäßig wäre „' + regelYo + '“). Gehört das Verb in die Gruppe [1. Person]? Bei reinen Schreibänderungen wie cojo oder venzo ist es richtig so.');
+    }
+    if (gruppe === 'yo_irregular' && yoRegelmaessig) {
+      warnungen.push('Die yo-Form ist regelmäßig. Gehört das Verb wirklich in die Gruppe [1. Person]?');
+    }
+    if ((gruppe === 'e_ie' || gruppe === 'o_ue' || gruppe === 'e_i') && yoRegelmaessig) {
+      warnungen.push('Die yo-Form zeigt keinen Stammwechsel. Stimmt die Gruppe?');
+    }
+
+    if (reflexiv) formen = formen.map(function (f, i) { return REFLEXIV[i] + ' ' + f; });
+    var verb = { infinitiv: inf, gruppe: gruppe, formen: {}, reflexiv: reflexiv, zusatz: true, abweichend_von_regel: [] };
+    var regel = [regelYo].concat(end.slice(1).map(function (e) { return stamm + e; }));
+    FORM_SCHLUESSEL.forEach(function (k, i) {
+      verb.formen[k] = formen[i];
+      var ohneRefl = reflexiv ? formen[i].split(' ')[1] : formen[i];
+      if (ohneAkzent(ohneRefl) !== ohneAkzent(regel[i])) verb.abweichend_von_regel.push(k);
+    });
+    return { fehler: fehler, warnungen: warnungen, verb: verb };
+  }
+
+  /* Liest den Text von zusatzverben.txt.
+     Ergebnis: { verben: [...], zeilen: [{ nr, text, gruppe, status: 'ok'|'warnung'|'fehler', meldungen, verb }] } */
+  function leseZusatzverben(text, basisVerben) {
+    var bekannt = {};
+    (basisVerben || []).forEach(function (v) { bekannt[v.infinitiv] = 'in der Original-Tabelle'; });
+    var gruppe = null, zeilen = [], verben = [];
+    String(text || '').replace(/^﻿/, '').split(/\r?\n/).forEach(function (roh, index) {
+      var zeile = roh.trim();
+      if (!zeile || zeile.charAt(0) === '#') return;
+      var nr = index + 1;
+      var kopf = zeile.match(/^\[(.*)\]$/);
+      if (kopf) {
+        gruppe = gruppeAusUeberschrift(kopf[1]);
+        if (!gruppe) zeilen.push({ nr: nr, text: zeile, gruppe: null, status: 'fehler', meldungen: ['Unbekannte Gruppe. Erlaubt sind: [ar], [er], [ir], [1. Person], [e-ie], [o-ue], [e-i], [i-y].'] });
+        return;
+      }
+      var eintrag = { nr: nr, text: zeile, gruppe: gruppe, status: 'ok', meldungen: [] };
+      zeilen.push(eintrag);
+      if (!gruppe) { eintrag.status = 'fehler'; eintrag.meldungen.push('Die Zeile steht unter keiner gültigen Gruppen-Überschrift.'); return; }
+      var teile = zeile.split(/\s*[;,:=\t]\s*/).filter(function (t) { return t !== ''; });
+      if (teile.length > 2) { eintrag.status = 'fehler'; eintrag.meldungen.push('Bitte nur Infinitiv und yo-Form angeben, z. B. „cantar; canto“.'); return; }
+      var r = bildeFormen(teile[0], gruppe, teile[1] || '');
+      if (r.fehler.length) { eintrag.status = 'fehler'; eintrag.meldungen = r.fehler; return; }
+      if (bekannt[r.verb.infinitiv]) {
+        eintrag.status = 'fehler';
+        eintrag.meldungen.push('„' + r.verb.infinitiv + '“ ist schon ' + bekannt[r.verb.infinitiv] + ' enthalten.');
+        return;
+      }
+      bekannt[r.verb.infinitiv] = 'weiter oben in dieser Datei (Zeile ' + nr + ')';
+      if (r.warnungen.length) { eintrag.status = 'warnung'; eintrag.meldungen = r.warnungen; }
+      eintrag.verb = r.verb;
+      verben.push(r.verb);
+    });
+    return { verben: verben, zeilen: zeilen };
+  }
+
+  function verbenMitZusatz(basisDaten, zusatzText) {
+    var z = leseZusatzverben(zusatzText, basisDaten.verben);
+    return { verben: basisDaten.verben.concat(z.verben), zusatz: z };
+  }
+
+  var Logik = {
+    PRONOMEN: PRONOMEN, PRONOMEN_FORM: PRONOMEN_FORM, GRUPPEN: GRUPPEN, LEVEL: LEVEL, LEVEL_IDS: LEVEL_IDS,
+    SERIE_ZIEL: SERIE_ZIEL, levelInfo: levelInfo, naechstesLevel: naechstesLevel,
+    pronomenGewichte: pronomenGewichte, Generator: Generator, aufgabenText: aufgabenText,
+    pruefe: pruefe, normalisiere: normalisiere, neuerLernstand: neuerLernstand,
+    werteErstantwortAus: werteErstantwortAus, erzeugeCode: erzeugeCode, bereinigeCode: bereinigeCode,
+    zeigeCode: zeigeCode, bildeFormen: bildeFormen, leseZusatzverben: leseZusatzverben,
+    verbenMitZusatz: verbenMitZusatz, ZUSATZ_UEBERSCHRIFT: ZUSATZ_UEBERSCHRIFT
+  };
+  if (typeof module !== 'undefined' && module.exports) module.exports = Logik;
+  else global.Logik = Logik;
+})(this);
+</script>
+  <script>
+/* ---- speicher.js ---- */
+/* Speicherung: lokal im Browser (immer) und im Speicherdienst Supabase (wenn eingerichtet).
+   Der neuere Stand gewinnt. Ohne Verbindung wird lokal gespeichert und später übertragen. */
+(function (global) {
+  'use strict';
+  var SCHLUESSEL = 'spanisch-verben-lernstand';
+  var cfg = global.KONFIGURATION || {};
+
+  function konfiguriert() {
+    return !!(cfg.supabaseUrl && cfg.supabaseKey &&
+      cfg.supabaseUrl.indexOf('DEIN-PROJEKT') < 0 && cfg.supabaseKey.indexOf('DEIN-SCHLUESSEL') < 0);
+  }
+
+  // --- lokal ---------------------------------------------------------------
+  function ladeLokal() {
+    try {
+      var roh = global.localStorage.getItem(SCHLUESSEL);
+      return roh ? JSON.parse(roh) : null;
+    } catch (e) { return null; }
+  }
+  function speichereLokal(lernstand) {
+    try { global.localStorage.setItem(SCHLUESSEL, JSON.stringify(lernstand)); return true; }
+    catch (e) { return false; }
+  }
+  function loescheLokal() {
+    try { global.localStorage.removeItem(SCHLUESSEL); } catch (e) { /* egal */ }
+  }
+
+  // --- Supabase ------------------------------------------------------------
+  function rpc(name, argumente) {
+    var url = cfg.supabaseUrl.replace(/\/+$/, '') + '/rest/v1/rpc/' + name;
+    var steuerung = typeof AbortController !== 'undefined' ? new AbortController() : null;
+    var zeitlimit = setTimeout(function () { if (steuerung) steuerung.abort(); }, 10000);
+    return fetch(url, {
+      method: 'POST',
+      headers: {
+        'apikey': cfg.supabaseKey,
+        'Authorization': 'Bearer ' + cfg.supabaseKey, // bei neuen Schlüsseln erlaubt, wenn identisch mit apikey
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(argumente || {}),
+      signal: steuerung ? steuerung.signal : undefined
+    }).then(function (antwort) {
+      clearTimeout(zeitlimit);
+      if (!antwort.ok) {
+        return antwort.text().then(function (t) {
+          var f = new Error('Speicherdienst antwortet mit ' + antwort.status + ': ' + t);
+          f.status = antwort.status;
+          throw f;
+        });
+      }
+      return antwort.json();
+    }, function (f) { clearTimeout(zeitlimit); throw f; });
+  }
+
+  function anlegen(code) { return rpc('lernstand_anlegen', { p_code: code }); }
+  function laden(code) { return rpc('lernstand_laden', { p_code: code }); }
+  function speichern(s) {
+    return rpc('lernstand_speichern', {
+      p_code: s.code, p_level: s.level, p_serie: s.serie,
+      p_bearbeitet: s.bearbeitet, p_richtig: s.richtig, p_stand: s.stand
+    });
+  }
+
+  /* Gleicht den lokalen Stand mit dem Server ab.
+     Ergebnis: { lernstand, quelle: 'lokal' | 'server', status: 'gespeichert' | 'offline' | 'nur-lokal' } */
+  function abgleichen(lokal) {
+    if (!konfiguriert()) return Promise.resolve({ lernstand: lokal, quelle: 'lokal', status: 'nur-lokal' });
+    return speichern(lokal).then(function (server) {
+      if (server === null) {
+        // Code ist auf dem Server noch unbekannt (z. B. offline angelegt): jetzt anlegen
+        return anlegen(lokal.code).then(function () { return speichern(lokal); });
+      }
+      return server;
+    }).then(function (server) {
+      if (!server) throw new Error('Lernstand konnte nicht angelegt werden');
+      if (server.stand > lokal.stand) {
+        var neu = uebernehme(server);
+        speichereLokal(neu);
+        return { lernstand: neu, quelle: 'server', status: 'gespeichert' };
+      }
+      lokal.ausstehend = false;
+      speichereLokal(lokal);
+      return { lernstand: lokal, quelle: 'lokal', status: 'gespeichert' };
+    }).catch(function () {
+      lokal.ausstehend = true;
+      speichereLokal(lokal);
+      return { lernstand: lokal, quelle: 'lokal', status: 'offline' };
+    });
+  }
+
+  function uebernehme(server) {
+    return {
+      code: server.code, level: String(server.level), serie: Number(server.serie),
+      bearbeitet: Number(server.bearbeitet), richtig: Number(server.richtig),
+      stand: Number(server.stand), ausstehend: false
+    };
+  }
+
+  function neuerStempel(alt) { return Math.max(Date.now(), (alt || 0) + 1); }
+
+  global.Speicher = {
+    konfiguriert: konfiguriert, ladeLokal: ladeLokal, speichereLokal: speichereLokal,
+    loescheLokal: loescheLokal, anlegen: anlegen, laden: laden, abgleichen: abgleichen,
+    uebernehme: uebernehme, neuerStempel: neuerStempel
+  };
+})(this);
+</script>
+  <script>
+/* ---- app.js ---- */
+/* Oberfläche und Ablauf der Übung */
+(function () {
+  'use strict';
+  var L = window.Logik, S = window.Speicher;
+  function $(id) { return document.getElementById(id); }
+
+  var el = {
+    codebox: $('codebox'), codeAnzeige: $('code-anzeige'), codeKopieren: $('code-kopieren'),
+    status: $('status'), levelNummer: $('level-nummer'), levelTitel: $('level-titel'), levelHinweis: $('level-hinweis'),
+    fortschritt: $('fortschritt'), fortschrittText: $('fortschritt-text'), statistik: $('statistik'),
+    uebung: $('uebung'), wiederholung: $('wiederholung'), aufgabe: $('aufgabe'), form: $('antwort-form'),
+    antwort: $('antwort'), pruefen: $('pruefen'), rueckmeldung: $('rueckmeldung'),
+    loesungZeigen: $('loesung-zeigen'), weiter: $('weiter'),
+    fuss: $('fuss'), sync: $('sync-status'),
+    dlgStart: $('dlg-start'), dlgCode: $('dlg-code'), dlgNeu: $('dlg-neu'), dlgInfo: $('dlg-info')
+  };
+
+  var lernstand = null;
+  // Verbdaten: Original-Tabelle + Zusatzverben der Lehrkräfte (zusatzverben.txt)
+  var ZUSATZ_SCHLUESSEL = 'spanisch-verben-zusatzverben';
+  var daten = { verben: window.VERBDATEN.verben.slice() };
+  var zusatzAnzahl = 0;
+  window.ConjugaDaten = daten;
+  var generator = new L.Generator(daten);
+
+  function uebernimmZusatz(text) {
+    var r = L.verbenMitZusatz(window.VERBDATEN, text);
+    daten.verben = r.verben;
+    zusatzAnzahl = r.zusatz.verben.length;
+    generator.verben = daten.verben;
+    window.ConjugaZusatz = { anzahl: zusatzAnzahl, geladen: true };
+  }
+  function ladeZusatzverben() {
+    try { var gemerkt = window.localStorage.getItem(ZUSATZ_SCHLUESSEL); if (gemerkt) uebernimmZusatz(gemerkt); } catch (e) { /* egal */ }
+    if (location.protocol === 'file:' || typeof fetch !== 'function') return; // lokal geöffnet: Datei nicht lesbar
+    fetch('zusatzverben.txt', { cache: 'no-cache' }).then(function (a) {
+      if (!a.ok) throw new Error(String(a.status));
+      return a.text();
+    }).then(function (text) {
+      uebernimmZusatz(text);
+      try { window.localStorage.setItem(ZUSATZ_SCHLUESSEL, text); } catch (e) { /* egal */ }
+    }).catch(function () { /* ohne Zusatzverben weiterüben */ });
+  }
+  var aufgabe = null;
+  var phase = 'erst';          // 'erst' | 'korrektur' | 'fertig'
+  var korrekturFehler = 0;
+  var syncLaeuft = false, syncNochmal = false;
+
+  // ---------------------------------------------------------------------------
+  // Hilfen
+  // ---------------------------------------------------------------------------
+  function zufallsBytes(n) { var a = new Uint8Array(n); window.crypto.getRandomValues(a); return a; }
+  function esc(t) { return String(t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function oeffne(dlg) { if (typeof dlg.showModal === 'function') { if (!dlg.open) dlg.showModal(); } else dlg.setAttribute('open', ''); }
+  function schliesse(dlg) {
+    if (typeof dlg.close === 'function') dlg.close(); else dlg.removeAttribute('open');
+    // Nach dem Schließen zurück ins Eingabefeld
+    if (lernstand && !document.querySelector('dialog[open]')) el.antwort.focus({ preventScroll: true });
+  }
+  function zahl(n) { return n.toLocaleString('de-DE'); }
+
+  // ---------------------------------------------------------------------------
+  // Anzeige
+  // ---------------------------------------------------------------------------
+  function zeigeLernstand(neuGefuellt) {
+    var info = L.levelInfo(lernstand.level);
+    el.codeAnzeige.textContent = L.zeigeCode(lernstand.code);
+    el.levelNummer.textContent = 'Level ' + info.id;
+    el.levelTitel.textContent = info.titel;
+    el.levelHinweis.hidden = !info.hinweis;
+    el.levelHinweis.textContent = info.hinweis || '';
+
+    var html = '';
+    for (var i = 0; i < L.SERIE_ZIEL; i++) {
+      var klasse = i < lernstand.serie ? 'voll' : '';
+      if (neuGefuellt && i === lernstand.serie - 1) klasse += ' neu';
+      html += '<span class="' + klasse + '"></span>';
+    }
+    el.fortschritt.innerHTML = html;
+    el.fortschritt.setAttribute('aria-valuenow', String(lernstand.serie));
+    var rest = L.SERIE_ZIEL - lernstand.serie;
+    var naechstes = L.naechstesLevel(lernstand.level);
+    el.fortschrittText.innerHTML = '<strong>' + lernstand.serie + ' von ' + L.SERIE_ZIEL + '</strong> richtig in Folge · ' +
+      (naechstes ? 'noch ' + rest + ' bis Level ' + naechstes : 'noch ' + rest + ' bis zum Abschluss');
+    var quote = lernstand.bearbeitet ? Math.round(100 * lernstand.richtig / lernstand.bearbeitet) : 0;
+    el.statistik.textContent = 'Bearbeitet: ' + zahl(lernstand.bearbeitet) + ' · Beim ersten Versuch richtig: ' +
+      zahl(lernstand.richtig) + (lernstand.bearbeitet ? '\u00a0(' + quote + '\u00a0%)' : '');
+  }
+
+  function zeigeSync(status) {
+    var texte = {
+      'nur-lokal': 'Nur auf diesem Gerät gespeichert – der Speicherdienst ist noch nicht eingerichtet.',
+      'speichert': 'Wird gespeichert …',
+      'gespeichert': 'Lernstand gespeichert ✓',
+      'offline': 'Gerade keine Verbindung – dein Lernstand ist auf diesem Gerät gesichert und wird später übertragen.'
+    };
+    el.sync.textContent = texte[status] || '';
+    el.sync.classList.toggle('warnung', status === 'offline' || status === 'nur-lokal');
+  }
+
+  function zeigeAufgabe() {
+    var t;
+    if (aufgabe.pronomen === null) {
+      t = '<span class="pron">(unpersönlich)</span> <span class="inf">haber</span> <span class="pfeil">→</span>' +
+          '<span class="zusatz">„es gibt“</span>';
+    } else {
+      t = '<span class="pron">(' + esc(aufgabe.pronomen) + ')</span> <span class="inf">' + esc(aufgabe.infinitiv) +
+          '</span> <span class="pfeil">→</span>';
+    }
+    el.aufgabe.innerHTML = t;
+    el.wiederholung.hidden = !aufgabe.wiederholung;
+    el.antwort.value = '';
+    el.antwort.readOnly = false;
+    el.antwort.className = '';
+    el.rueckmeldung.innerHTML = '';
+    el.rueckmeldung.className = 'rueckmeldung';
+    el.loesungZeigen.hidden = false;   // Lösung kann jederzeit angezeigt werden
+    el.weiter.hidden = true;
+    el.pruefen.hidden = false;
+    phase = 'erst';
+    korrekturFehler = 0;
+    el.antwort.focus({ preventScroll: true });
+  }
+
+  function neueAufgabe() {
+    aufgabe = generator.naechste(lernstand.level);
+    zeigeAufgabe();
+  }
+
+  function rueckmeldung(art, html) {
+    el.rueckmeldung.className = 'rueckmeldung ' + art;
+    el.rueckmeldung.innerHTML = html;
+  }
+
+  function zuWeiter() {
+    phase = 'fertig';
+    el.antwort.readOnly = true;
+    el.pruefen.hidden = true;
+    el.loesungZeigen.hidden = true;
+    el.weiter.hidden = false;
+    // Fokus im Eingabefeld lassen, damit Enter weiterführt und die Tastatur am Handy offen bleibt
+    el.antwort.focus({ preventScroll: true });
+  }
+
+  function tabellenHinweis() {
+    return aufgabe.hinweis ? '<p class="klein">Hinweis zur Tabelle: ' + esc(aufgabe.hinweis) + '</p>' : '';
+  }
+
+  // ---------------------------------------------------------------------------
+  // Prüfen
+  // ---------------------------------------------------------------------------
+  function pruefen() {
+    if (phase === 'fertig') { neueAufgabe(); return; }
+    var r = L.pruefe(el.antwort.value, aufgabe.loesung);
+    if (r.ergebnis === 'leer') { wackeln(); return; }
+    var richtig = r.ergebnis !== 'falsch';
+    var akzentHinweis = r.ergebnis === 'richtig_akzent_abweichend'
+      ? '<p>So schreibt man es richtig: <strong lang="es">' + esc(aufgabe.loesung) + '</strong></p>' : '';
+
+    if (phase === 'erst') {
+      var e = L.werteErstantwortAus(lernstand, richtig);
+      lernstand = e.stand;
+      lernstand.stand = S.neuerStempel(lernstand.stand);
+      lernstand.ausstehend = true;
+      S.speichereLokal(lernstand);
+      zeigeLernstand(richtig);
+      synchronisieren();
+
+      if (richtig) {
+        el.antwort.className = 'ist-richtig';
+        var extra = '';
+        if (e.aufgestiegen) {
+          var info = L.levelInfo(lernstand.level);
+          extra = '<div class="aufstieg"><p class="titel">¡Fantástico! Du bist jetzt in Level ' + esc(info.id) + '.</p>' +
+            '<p>' + esc(info.titel) + (info.hinweis ? '<br><span class="klein">' + esc(info.hinweis) + '</span>' : '') + '</p></div>';
+        } else if (e.alleGeschafft) {
+          extra = '<div class="aufstieg"><p class="titel">¡Enhorabuena! Du hast alle Level geschafft.</p>' +
+            '<p>Du kannst in Level 15 mit allen unregelmäßigen Verben weiterüben.</p></div>';
+        }
+        rueckmeldung('gut', '<p class="titel">¡Correcto! Richtig.</p>' + akzentHinweis + tabellenHinweis() + extra);
+        zuWeiter();
+      } else {
+        el.antwort.className = 'ist-falsch';
+        generator.spaeterWiederholen(aufgabe);
+        phase = 'korrektur';
+        rueckmeldung('schlecht', '<p class="titel">Leider falsch. Versuch es noch einmal.</p>' + hinweisText(r.hinweis) +
+          '<p class="klein">Die Serie beginnt wieder bei 0.</p>');
+        el.antwort.select();
+        wackeln();
+      }
+      return;
+    }
+
+    // Korrektur – zählt nicht für die Serie
+    if (richtig) {
+      el.antwort.className = 'ist-richtig';
+      rueckmeldung('neutral', '<p class="titel">Jetzt stimmt’s!</p>' + akzentHinweis +
+        '<p class="klein">Korrekturen zählen nicht für die Serie. Diese Aufgabe kommt gleich noch einmal.</p>' + tabellenHinweis());
+      zuWeiter();
+    } else {
+      korrekturFehler++;
+      el.antwort.className = 'ist-falsch';
+      rueckmeldung('schlecht', '<p class="titel">Noch nicht richtig.</p>' + hinweisText(r.hinweis) +
+        (korrekturFehler >= 2 ? '<p class="klein">Wenn du nicht weiterkommst, drücke auf „Lösung anzeigen“.</p>' : ''));
+      el.antwort.select();
+      wackeln();
+    }
+  }
+
+  function hinweisText(h) {
+    if (h === 'pronomen') return '<p>Bitte gib nur die Verbform ein – ohne Subjektpronomen.</p>';
+    if (h === 'reflexiv') return '<p>Bei reflexiven Verben gehört das Reflexivpronomen zur Antwort.</p>';
+    return '';
+  }
+
+  function wackeln() {
+    el.antwort.classList.remove('wackeln');
+    void el.antwort.offsetWidth;
+    el.antwort.classList.add('wackeln');
+  }
+
+  function loesungAnzeigen() {
+    if (phase === 'fertig') return;
+    var zusatz = '';
+    if (phase === 'erst') {
+      // Lösung vor der ersten Antwort angesehen: zählt wie eine falsche Erstantwort
+      lernstand = L.werteErstantwortAus(lernstand, false).stand;
+      lernstand.stand = S.neuerStempel(lernstand.stand);
+      lernstand.ausstehend = true;
+      S.speichereLokal(lernstand);
+      zeigeLernstand(false);
+      synchronisieren();
+      generator.spaeterWiederholen(aufgabe);
+      zusatz = '<p class="klein">Die Serie beginnt wieder bei 0.</p>';
+    }
+    rueckmeldung('neutral', '<p class="titel">Lösung: <span lang="es">' + esc(aufgabe.loesung) + '</span></p>' +
+      '<p class="klein">Diese Aufgabe kommt gleich noch einmal.</p>' + zusatz + tabellenHinweis());
+    el.antwort.className = '';
+    zuWeiter();
+  }
+
+  // ---------------------------------------------------------------------------
+  // Speicherdienst
+  // ---------------------------------------------------------------------------
+  function synchronisieren() {
+    if (!lernstand) return;
+    if (!S.konfiguriert()) { zeigeSync('nur-lokal'); return; }
+    if (syncLaeuft) { syncNochmal = true; return; }
+    syncLaeuft = true;
+    zeigeSync('speichert');
+    var gesendet = lernstand.stand;
+    S.abgleichen(lernstand).then(function (r) {
+      syncLaeuft = false;
+      // Während der Übertragung weitergeübt? Dann den neueren lokalen Stand behalten.
+      if (lernstand.stand !== gesendet) { syncNochmal = true; }
+      else if (r.quelle === 'server' && r.lernstand.code === lernstand.code) {
+        var altesLevel = lernstand.level;
+        lernstand = r.lernstand;
+        zeigeLernstand(false);
+        if (lernstand.level !== altesLevel && phase === 'erst' && !el.antwort.value) neueAufgabe();
+      }
+      zeigeSync(r.status);
+      if (syncNochmal) { syncNochmal = false; synchronisieren(); }
+    });
+  }
+
+  function starteMit(stand) {
+    lernstand = stand;
+    S.speichereLokal(lernstand);
+    generator = new L.Generator(daten);
+    el.codebox.hidden = el.status.hidden = el.uebung.hidden = el.fuss.hidden = false;
+    zeigeLernstand(false);
+    neueAufgabe();
+    synchronisieren();
+  }
+
+  function neuBeginnen(meldung) {
+    var code = L.erzeugeCode(zufallsBytes);
+    var stand = L.neuerLernstand(code);
+    stand.stand = S.neuerStempel(0);
+    stand.ausstehend = true;
+    if (!S.konfiguriert()) { starteMit(stand); return Promise.resolve(); }
+    if (meldung) { meldung.className = 'dialog-meldung ok'; meldung.textContent = 'Code wird angelegt …'; }
+    function versuch(n) {
+      return S.anlegen(code).then(function (ergebnis) {
+        if (ergebnis === null && n < 3) { // extrem unwahrscheinlich: Code schon vergeben
+          code = L.erzeugeCode(zufallsBytes); stand.code = code; return versuch(n + 1);
+        }
+      });
+    }
+    // Ohne Verbindung trotzdem starten; der Code wird später angelegt.
+    return versuch(0).catch(function () { }).then(function () { starteMit(stand); });
+  }
+
+  function codeLaden(eingabe, meldung, fertig) {
+    var code = L.bereinigeCode(eingabe);
+    meldung.className = 'dialog-meldung';
+    if (!code) { meldung.textContent = 'Ein Code hat 12 Zeichen, zum Beispiel ABCD-EFGH-JKLM.'; return; }
+    if (lernstand && lernstand.code === code) { fertig(); return; }
+    if (!S.konfiguriert()) {
+      meldung.textContent = 'Fortsetzen mit Code ist erst möglich, wenn der Speicherdienst eingerichtet ist.';
+      return;
+    }
+    meldung.className = 'dialog-meldung ok';
+    meldung.textContent = 'Lernstand wird geladen …';
+    S.laden(code).then(function (server) {
+      if (!server) {
+        meldung.className = 'dialog-meldung';
+        meldung.textContent = 'Diesen Code gibt es nicht. Bitte prüfe deine Eingabe.';
+        return;
+      }
+      fertig();
+      starteMit(S.uebernehme(server));
+      zeigeSync('gespeichert');
+    }).catch(function () {
+      meldung.className = 'dialog-meldung';
+      meldung.textContent = 'Keine Verbindung zum Speicherdienst. Bitte versuche es gleich noch einmal.';
+    });
+  }
+
+  // ---------------------------------------------------------------------------
+  // Ereignisse
+  // ---------------------------------------------------------------------------
+  el.form.addEventListener('submit', function (ev) { ev.preventDefault(); pruefen(); });
+  el.antwort.addEventListener('keydown', function (ev) {
+    if (ev.key === 'Enter' && !ev.isComposing) { ev.preventDefault(); pruefen(); }
+  });
+  el.weiter.addEventListener('click', function () { neueAufgabe(); });
+  el.loesungZeigen.addEventListener('click', loesungAnzeigen);
+  document.addEventListener('keydown', function (ev) {
+    if (ev.key === 'Enter' && phase === 'fertig' && document.activeElement !== el.antwort &&
+        !document.querySelector('dialog[open]') && document.activeElement.tagName !== 'BUTTON') {
+      ev.preventDefault(); neueAufgabe();
+    }
+  });
+
+  Array.prototype.forEach.call(document.querySelectorAll('.akzent'), function (k) {
+    k.addEventListener('mousedown', function (ev) { ev.preventDefault(); }); // Fokus im Eingabefeld halten
+    k.addEventListener('click', function () {
+      if (el.antwort.readOnly) return;
+      var z = k.getAttribute('data-zeichen');
+      var a = el.antwort.selectionStart, b = el.antwort.selectionEnd, v = el.antwort.value;
+      if (a === null || a === undefined) { a = b = v.length; }
+      el.antwort.value = v.slice(0, a) + z + v.slice(b);
+      el.antwort.focus();
+      el.antwort.setSelectionRange(a + z.length, a + z.length);
+    });
+  });
+
+  el.codeKopieren.addEventListener('click', function () {
+    var text = L.zeigeCode(lernstand.code);
+    function bestaetigt() {
+      el.codeKopieren.textContent = 'Kopiert ✓';
+      setTimeout(function () { el.codeKopieren.textContent = 'Kopieren'; }, 2000);
+    }
+    function ersatz() {
+      var t = document.createElement('textarea');
+      t.value = text; t.setAttribute('readonly', ''); t.style.position = 'fixed'; t.style.opacity = '0';
+      document.body.appendChild(t); t.select();
+      try { document.execCommand('copy'); bestaetigt(); } catch (e) { window.prompt('Code kopieren:', text); }
+      document.body.removeChild(t);
+    }
+    if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(text).then(bestaetigt, ersatz);
+    else ersatz();
+  });
+
+  // Start-Dialog
+  $('start-neu').addEventListener('click', function () {
+    neuBeginnen($('start-meldung')).then(function () { schliesse(el.dlgStart); });
+  });
+  $('start-code').addEventListener('click', function () { schliesse(el.dlgStart); oeffneCodeDialog(true); });
+  el.dlgStart.addEventListener('cancel', function (ev) { ev.preventDefault(); }); // nicht wegklickbar
+
+  // Code-Dialog
+  var codeAusStart = false;
+  function oeffneCodeDialog(ausStart) {
+    codeAusStart = ausStart;
+    $('code-eingabe').value = '';
+    $('code-meldung').textContent = '';
+    var warnung = $('code-warnung');
+    if (lernstand) {
+      warnung.hidden = false;
+      warnung.innerHTML = 'Dein aktueller Code bleibt gültig. Notiere ihn, falls du zurückwechseln möchtest: <strong class="code">' +
+        esc(L.zeigeCode(lernstand.code)) + '</strong>';
+    } else warnung.hidden = true;
+    oeffne(el.dlgCode);
+    $('code-eingabe').focus();
+  }
+  function codeDialogZu() {
+    schliesse(el.dlgCode);
+    if (codeAusStart && !lernstand) oeffne(el.dlgStart);
+  }
+  $('oeffne-code').addEventListener('click', function () { oeffneCodeDialog(false); });
+  $('code-abbrechen').addEventListener('click', codeDialogZu);
+  el.dlgCode.addEventListener('cancel', function (ev) { ev.preventDefault(); codeDialogZu(); });
+  $('code-form').addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    codeLaden($('code-eingabe').value, $('code-meldung'), function () { schliesse(el.dlgCode); });
+  });
+
+  // Neu-Dialog
+  $('oeffne-neu').addEventListener('click', function () {
+    $('neu-alter-code').textContent = L.zeigeCode(lernstand.code);
+    oeffne(el.dlgNeu);
+  });
+  $('neu-abbrechen').addEventListener('click', function () { schliesse(el.dlgNeu); });
+  $('neu-bestaetigen').addEventListener('click', function () {
+    schliesse(el.dlgNeu);
+    neuBeginnen(null);
+  });
+
+  // Info-Dialog
+  $('oeffne-info').addEventListener('click', function () {
+    $('zusatz-info').textContent = zusatzAnzahl
+      ? 'Zusätzlich haben Lehrkräfte ' + zusatzAnzahl + (zusatzAnzahl === 1 ? ' Verb' : ' Verben') + ' ergänzt.' : '';
+    $('levelliste').innerHTML = L.LEVEL.map(function (l) {
+      return '<li' + (lernstand && l.id === lernstand.level ? ' class="aktuell"' : '') + '><span class="nr">' + esc(l.id) +
+        '</span><span>' + esc(l.titel) + '</span></li>';
+    }).join('');
+    oeffne(el.dlgInfo);
+  });
+  $('info-schliessen').addEventListener('click', function () { schliesse(el.dlgInfo); });
+
+  // Erneut abgleichen, wenn das Gerät wieder online ist oder die Seite wieder sichtbar wird
+  window.addEventListener('online', synchronisieren);
+  document.addEventListener('visibilitychange', function () {
+    if (document.visibilityState === 'visible') synchronisieren();
+  });
+
+  // ---------------------------------------------------------------------------
+  // Start
+  // ---------------------------------------------------------------------------
+  ladeZusatzverben();
+  var gespeichert = S.ladeLokal();
+  if (gespeichert && L.bereinigeCode(gespeichert.code) && L.levelInfo(gespeichert.level)) {
+    starteMit(gespeichert);
+  } else {
+    oeffne(el.dlgStart);
+  }
+})();
+</script>
+</body>
+</html>

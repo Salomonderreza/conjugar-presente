@@ -1,0 +1,26 @@
+# Hält das kostenlose Supabase-Projekt aktiv (es pausiert sonst nach einer Woche ohne Nutzung, z. B. in den Ferien).
+# Liest Adresse und Schlüssel aus index.html – es muss nichts weiter eingerichtet werden.
+name: Speicherdienst wach halten
+
+on:
+  schedule:
+    - cron: '17 6 */3 * *'   # alle drei Tage um 6:17 Uhr (UTC)
+  workflow_dispatch:          # zusätzlich manuell startbar (Actions → Workflow → Run workflow)
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Supabase anpingen
+        run: |
+          URL=$(sed -n "s/.*supabaseUrl: *'\([^']*\)'.*/\1/p" index.html)
+          KEY=$(sed -n "s/.*supabaseKey: *'\([^']*\)'.*/\1/p" index.html)
+          if [ -z "$URL" ] || echo "$URL$KEY" | grep -q 'DEIN-'; then
+            echo "Speicherdienst ist noch nicht eingetragen – nichts zu tun."
+            exit 0
+          fi
+          curl -fsS -X POST "${URL%/}/rest/v1/rpc/lernstand_ping" \
+            -H "apikey: $KEY" -H "Authorization: Bearer $KEY" \
+            -H "Content-Type: application/json" -d '{}'
+          echo " – Speicherdienst ist erreichbar."

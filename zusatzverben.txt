@@ -1,0 +1,42 @@
+# ======================================================================
+#  ZUSATZVERBEN – hier können Lehrkräfte neue Verben ergänzen
+# ======================================================================
+#
+#  So geht's:
+#  1. Schreibe das Verb in eine neue Zeile unter die passende Gruppe:
+#        Infinitiv; yo-Form
+#     z. B.   cantar; canto
+#  2. Bei reflexiven Verben: levantarse; me levanto
+#  3. Speichern („Commit changes“). Nach 1–2 Minuten ist das Verb in der App.
+#  4. Zur Kontrolle pruefen.html öffnen: Dort stehen alle Formen,
+#     die die App gebildet hat, und eventuelle Fehler.
+#
+#  Zeilen, die mit # beginnen, ignoriert die App (wie diese hier).
+#  Die Verben aus der Original-Tabelle sind schon in der App
+#  und gehören NICHT in diese Datei.
+# ======================================================================
+
+[ar]
+# Beispiel:  cantar; canto
+
+[er]
+# Beispiel:  vender; vendo
+
+[ir]
+# Beispiel:  subir; subo
+
+[1. Person]
+# Verben, bei denen nur die yo-Form unregelmäßig ist
+# Beispiel:  ofrecer; ofrezco
+
+[e-ie]
+# Beispiel:  entender; entiendo
+
+[o-ue]
+# Beispiel:  volver; vuelvo
+
+[e-i]
+# Beispiel:  servir; sirvo
+
+[i-y]
+# Beispiel:  incluir; incluyo

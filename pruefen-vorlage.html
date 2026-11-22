@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Zusatzverben prüfen – ¡Conjuga!</title>
+  <meta name="robots" content="noindex">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="rahmen breit-rahmen">
+    <header class="kopf">
+      <div class="marke">
+        <span class="logo" aria-hidden="true">ñ</span>
+        <div>
+          <h1>Zusatzverben prüfen</h1>
+          <p class="untertitel">Für Lehrkräfte · ¡Conjuga!</p>
+        </div>
+      </div>
+      <a class="knopf zweit" href="./">Zur Übung</a>
+    </header>
+
+    <section class="karte">
+      <p id="lade-status">Datei wird geladen …</p>
+      <div class="pruef-zusammenfassung" id="zusammenfassung"></div>
+    </section>
+
+    <section class="karte" id="ergebnis"></section>
+
+    <section class="karte">
+      <h2 class="pruef-h2">Vor dem Speichern ausprobieren</h2>
+      <p>Du kannst den Inhalt von <code>zusatzverben.txt</code> hier bearbeiten und prüfen, bevor du ihn auf GitHub speicherst. Änderungen hier verändern die App nicht.</p>
+      <textarea id="eingabe" class="pruef-eingabe" spellcheck="false" autocomplete="off" autocapitalize="none"></textarea>
+      <div class="dialog-knoepfe">
+        <button type="button" class="knopf haupt" id="pruefen-knopf">Prüfen</button>
+      </div>
+    </section>
+  </div>
+
+  <script src="verben.js"></script>
+  <script src="logik.js"></script>
+  <script>
+  (function () {
+    'use strict';
+    var L = window.Logik;
+    var SPALTEN = ['yo', 'tú', 'él/ella/usted', 'nosotros', 'vosotros', 'ellos/ellas/ustedes'];
+    var SCHLUESSEL = ['yo', 'tu', 'el', 'nosotros', 'vosotros', 'ellos'];
+    var GRUPPEN_REIHE = ['ar', 'er', 'ir', 'yo_irregular', 'e_ie', 'o_ue', 'e_i', 'i_y'];
+    function esc(t) { return String(t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+    function $(id) { return document.getElementById(id); }
+
+    function zeige(text) {
+      var r = L.leseZusatzverben(text, window.VERBDATEN.verben);
+      var ok = r.zeilen.filter(function (z) { return z.status === 'ok'; }).length;
+      var warn = r.zeilen.filter(function (z) { return z.status === 'warnung'; }).length;
+      var fehl = r.zeilen.filter(function (z) { return z.status === 'fehler'; });
+      $('zusammenfassung').innerHTML =
+        '<span class="zahl gut">' + (ok + warn) + ((ok + warn) === 1 ? ' Verb' : ' Verben') + ' übernommen</span>' +
+        (warn ? '<span class="zahl warn">' + warn + ' davon bitte prüfen</span>' : '') +
+        (fehl.length ? '<span class="zahl fehl">' + fehl.length + (fehl.length === 1 ? ' Zeile' : ' Zeilen') + ' nicht übernommen</span>' : '');
+
+      var html = '';
+      if (fehl.length) {
+        html += '<h2 class="pruef-h2">Nicht übernommen</h2><ul class="pruef-fehler">' + fehl.map(function (z) {
+          return '<li><strong>Zeile ' + z.nr + ':</strong> <code>' + esc(z.text) + '</code><br>' + z.meldungen.map(esc).join('<br>') + '</li>';
+        }).join('') + '</ul>';
+      }
+      GRUPPEN_REIHE.forEach(function (g) {
+        var zeilen = r.zeilen.filter(function (z) { return z.verb && z.verb.gruppe === g; });
+        if (!zeilen.length) return;
+        html += '<h2 class="pruef-h2">' + esc(L.ZUSATZ_UEBERSCHRIFT[g]) + ' ' + esc(L.GRUPPEN[g].name) + '</h2>' +
+          '<div class="tabelle-huelle"><table class="pruef-tabelle"><thead><tr><th>Zeile</th><th>Verb</th>' +
+          SPALTEN.map(function (s) { return '<th>' + s + '</th>'; }).join('') + '</tr></thead><tbody>' +
+          zeilen.map(function (z) {
+            return '<tr class="' + z.status + '"><td>' + z.nr + '</td><td><strong>' + esc(z.verb.infinitiv) + '</strong></td>' +
+              SCHLUESSEL.map(function (k) {
+                var unreg = z.verb.abweichend_von_regel.indexOf(k) >= 0;
+                return '<td' + (unreg ? ' class="unreg" title="weicht von der regelmäßigen Bildung ab"' : '') + ' lang="es">' + esc(z.verb.formen[k]) + '</td>';
+              }).join('') + '</tr>' +
+              (z.meldungen.length ? '<tr class="hinweis-zeile"><td></td><td colspan="7">⚠ ' + z.meldungen.map(esc).join('<br>⚠ ') + '</td></tr>' : '');
+          }).join('') + '</tbody></table></div>';
+      });
+      if (!r.zeilen.length) html = '<p>Die Datei enthält noch keine Zusatzverben.</p>';
+      else html += '<p class="quelle"><span class="unreg-muster">Fett</span> = Form weicht von der regelmäßigen Bildung ab (wichtig für die Gewichtung der Aufgaben).</p>';
+      $('ergebnis').innerHTML = html;
+    }
+
+    $('pruefen-knopf').addEventListener('click', function () { zeige($('eingabe').value); });
+
+    if (location.protocol === 'file:') {
+      $('lade-status').textContent = 'Die Seite ist direkt vom Computer geöffnet, deshalb kann sie zusatzverben.txt nicht selbst laden. Füge den Inhalt der Datei unten ein und klicke auf „Prüfen“.';
+      zeige('');
+      return;
+    }
+    fetch('zusatzverben.txt', { cache: 'no-cache' }).then(function (a) {
+      if (!a.ok) throw new Error('Status ' + a.status);
+      return a.text();
+    }).then(function (text) {
+      $('lade-status').innerHTML = 'Geprüft wird die veröffentlichte Datei <code>zusatzverben.txt</code> (Stand: ' +
+        new Date().toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) + ' Uhr). ' +
+        'Nach einer Änderung auf GitHub dauert es 1–2 Minuten, bis sie hier erscheint. Dann Seite neu laden.';
+      $('eingabe').value = text;
+      zeige(text);
+    }).catch(function (f) {
+      $('lade-status').textContent = 'zusatzverben.txt konnte nicht geladen werden (' + f.message + '). Liegt die Datei im selben Ordner wie die App?';
+      zeige('');
+    });
+  })();
+  </script>
+</body>
+</html>

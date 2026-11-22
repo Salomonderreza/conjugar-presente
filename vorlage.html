@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>¡Conjuga! – Spanische Verben im Präsens</title>
+  <meta name="description" content="Spanische Verben im Präsens konjugieren üben – mit Leveln und Fortsetzungscode.">
+  <meta name="theme-color" content="#c2410c">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23c2410c'/%3E%3Ctext x='32' y='45' font-size='38' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'%3E%C3%B1%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="rahmen">
+    <header class="kopf">
+      <div class="marke">
+        <span class="logo" aria-hidden="true">ñ</span>
+        <div>
+          <h1>¡Conjuga!</h1>
+          <p class="untertitel">Spanische Verben im Präsens</p>
+        </div>
+      </div>
+      <div class="codebox" id="codebox" hidden>
+        <span class="codebox-label">Dein Fortsetzungscode</span>
+        <div class="codebox-zeile">
+          <strong id="code-anzeige" class="code">––––-––––-––––</strong>
+          <button type="button" id="code-kopieren" class="knopf klein">Kopieren</button>
+        </div>
+      </div>
+    </header>
+
+    <section class="karte status" id="status" hidden aria-label="Lernstand">
+      <div class="status-kopf">
+        <span class="level-abzeichen" id="level-nummer">Level 1</span>
+        <span class="level-titel" id="level-titel"></span>
+      </div>
+      <p class="level-hinweis" id="level-hinweis" hidden></p>
+      <div class="fortschritt" id="fortschritt" role="progressbar" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0" aria-label="Fortschritt bis zum nächsten Level"></div>
+      <p class="fortschritt-text" id="fortschritt-text"></p>
+      <p class="statistik" id="statistik"></p>
+    </section>
+
+    <main class="karte aufgabe-karte" id="uebung" hidden>
+      <p class="markierung" id="wiederholung" hidden>Wiederholung</p>
+      <p class="aufgabe" id="aufgabe" aria-live="polite"></p>
+      <form id="antwort-form" class="antwort-form" autocomplete="off" novalidate>
+        <label for="antwort" class="unsichtbar">Deine Antwort (nur die Verbform)</label>
+        <input id="antwort" name="antwort" type="text" lang="es" inputmode="text"
+               autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"
+               placeholder="Verbform eingeben" enterkeyhint="done">
+        <button type="submit" id="pruefen" class="knopf haupt">Prüfen</button>
+      </form>
+      <div class="akzente" aria-label="Sonderzeichen einfügen">
+        <button type="button" class="akzent" data-zeichen="á">á</button>
+        <button type="button" class="akzent" data-zeichen="é">é</button>
+        <button type="button" class="akzent" data-zeichen="í">í</button>
+        <span class="akzent-info">Akzente werden nicht bewertet.</span>
+      </div>
+      <div class="rueckmeldung" id="rueckmeldung" aria-live="assertive"></div>
+      <div class="aktionen">
+        <button type="button" id="loesung-zeigen" class="knopf zweit" hidden>Lösung anzeigen</button>
+        <button type="button" id="weiter" class="knopf haupt" hidden>Weiter <span aria-hidden="true">→</span></button>
+      </div>
+    </main>
+
+    <footer class="fuss" id="fuss" hidden>
+      <p class="sync" id="sync-status"></p>
+      <div class="fuss-knoepfe">
+        <button type="button" class="knopf text" id="oeffne-code">Anderen Code eingeben</button>
+        <button type="button" class="knopf text" id="oeffne-neu">Neu beginnen</button>
+        <button type="button" class="knopf text" id="oeffne-info">So funktioniert's</button>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Willkommen -->
+  <dialog id="dlg-start" class="dialog">
+    <h2>¡Hola! Willkommen</h2>
+    <p>Hier übst du, spanische Verben im Präsens zu konjugieren. Du startest in Level 1. Mit zehn richtigen Antworten hintereinander steigst du ins nächste Level auf.</p>
+    <p>Du bekommst einen <strong>Fortsetzungscode</strong>. Damit kannst du später – auch auf einem anderen Gerät – weitermachen. Namen oder andere Daten brauchen wir nicht.</p>
+    <div class="dialog-knoepfe gestapelt">
+      <button type="button" class="knopf haupt" id="start-neu">Neu beginnen</button>
+      <button type="button" class="knopf zweit" id="start-code">Ich habe schon einen Code</button>
+    </div>
+    <p class="dialog-meldung" id="start-meldung" aria-live="polite"></p>
+  </dialog>
+
+  <!-- Code eingeben -->
+  <dialog id="dlg-code" class="dialog">
+    <form id="code-form" novalidate>
+      <h2>Lernstand fortsetzen</h2>
+      <p id="code-warnung" hidden></p>
+      <label for="code-eingabe">Fortsetzungscode</label>
+      <input id="code-eingabe" type="text" class="code-eingabe" placeholder="ABCD-EFGH-JKLM"
+             autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false" maxlength="20">
+      <p class="dialog-meldung" id="code-meldung" aria-live="polite"></p>
+      <div class="dialog-knoepfe">
+        <button type="button" class="knopf zweit" id="code-abbrechen">Abbrechen</button>
+        <button type="submit" class="knopf haupt" id="code-laden">Laden</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Neu beginnen -->
+  <dialog id="dlg-neu" class="dialog">
+    <h2>Neu beginnen?</h2>
+    <p>Du bekommst einen neuen Code und startest wieder in Level 1.</p>
+    <p>Dein bisheriger Lernstand bleibt unter diesem Code erhalten. Notiere ihn, falls du später dorthin zurück möchtest:</p>
+    <p class="code gross" id="neu-alter-code"></p>
+    <div class="dialog-knoepfe">
+      <button type="button" class="knopf zweit" id="neu-abbrechen">Abbrechen</button>
+      <button type="button" class="knopf haupt" id="neu-bestaetigen">Neu beginnen</button>
+    </div>
+  </dialog>
+
+  <!-- Info -->
+  <dialog id="dlg-info" class="dialog breit">
+    <h2>So funktioniert's</h2>
+    <ul class="regeln">
+      <li>Gib <strong>nur die Verbform</strong> ein: bei „(yo) comprar →“ also <em>compro</em>, nicht <em>yo compro</em>.</li>
+      <li>Bei reflexiven Verben gehört das Reflexivpronomen dazu: (yo) llamarse → <em>me llamo</em>.</li>
+      <li>Akzente werden nicht bewertet. Nach deiner Antwort siehst du, wie das Wort richtig geschrieben wird.</li>
+      <li>Wenn du nicht weiterkommst, drücke auf „Lösung anzeigen“. Die Aufgabe kommt dann später noch einmal, und die Serie beginnt wieder bei 0.</li>
+      <li>Ist deine erste Antwort falsch, korrigierst du sie selbst. Die Serie beginnt dann wieder bei 0.</li>
+      <li>Zehn richtige erste Antworten hintereinander: nächstes Level.</li>
+      <li>Mit <kbd>Enter</kbd> prüfst du deine Antwort und gehst zur nächsten Aufgabe.</li>
+    </ul>
+    <h3>Die Level</h3>
+    <ol class="levelliste" id="levelliste"></ol>
+    <p class="quelle">Alle Verben und Formen stammen aus den Konjugationstabellen „Tablas de conjugaciones“. <span id="zusatz-info"></span></p>
+    <div class="dialog-knoepfe">
+      <button type="button" class="knopf haupt" id="info-schliessen">Schließen</button>
+    </div>
+  </dialog>
+
+  <noscript><p class="karte">Bitte aktiviere JavaScript, um die Übung zu nutzen.</p></noscript>
+
+  <script src="konfiguration.js"></script>
+  <script src="verben.js"></script>
+  <script src="logik.js"></script>
+  <script src="speicher.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
