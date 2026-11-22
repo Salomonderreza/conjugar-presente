@@ -40,3 +40,5 @@
 
 [i-y]
 # Beispiel:  incluir; incluyo
+
+intuir; intuyo
